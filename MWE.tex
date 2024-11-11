@@ -1,0 +1,123 @@
+\documentclass{article}
+\usepackage{l3benchmark}
+%\usepackage{ebgaramond}
+\ExplSyntaxOn
+\usepackage{scaletextbullet}
+\ExplSyntaxOff
+\usepackage{parskip}
+\usepackage{enumitem}
+\setlist
+  {
+      % horizontal spacing
+      leftmargin = *
+    , labelsep   = 0.5em
+      % vertical spacing
+    , topsep     = 0pt
+    , partopsep  = 0pt
+    , parsep     = \smallskipamount
+    , itemsep    = 0pt
+  }
+\setlist[itemize,1]{label=\textbullet}
+\setlist[itemize,2]{label=\textbullet}
+\setlist[itemize,3]{label=\textbullet}
+
+\def\pangram{The quick brown fox jumps over the lazy dog.}
+
+%\newcommand{\textsmallbulletfactor}{0.7}% font dependent
+%\newcommand{\textsmallbulletscale}{0.5}% font dependent
+%\newcommand{\textsmallbullet}{%
+%  \begingroup
+%  \sbox0{\textbullet}%
+%  % how much the bullet stays above the baseline
+%  \dimen0=\dimexpr\ht0-\textsmallbulletfactor\wd0\relax
+%  \dimen2=\dimexpr(\ht0+\dimen0)/2\relax % the height of the center
+%  % scale the bullet sitting on the baseline
+%  \sbox0{\scalebox{\textsmallbulletscale}{\raisebox{-\dimen0}{\textbullet}}}%
+%  % now we raise it
+%  \raisebox{\dimexpr\dimen2-0.5\ht0\relax}{\usebox0}%
+%  \endgroup
+%}
+
+
+\begin{document}
+
+
+\[ x = \frac{-b\pm\sqrt{b^2-4ac}}{2a}\]
+
+
+\fpeval{1^-0.5}
+
+\fpeval{2^-0.5}
+
+\fpeval{3^-0.5}
+
+\fpeval{4^-0.5}
+
+\SetTextBulletFactor{0.4}
+
+\scaletextbulletdebug
+
+\ExplSyntaxOn
+\benchmark:n { \fp_set:Nn \l_tmpa_fp {1^-0.5} }
+\benchmark:n { \fp_set:Nn \l_tmpa_fp {2^-0.5} }
+\benchmark:n { \fp_set:Nn \l_tmpa_fp {3^-0.5} }
+\benchmark:n { \fp_set:Nn \l_tmpa_fp {4^-0.5} }
+\benchmark:n
+  {
+    \int_case:nn { 5 }
+      {
+        {1}{}
+        {2}{}
+        {3}{}
+        {4}{}
+        {5}{}
+      }
+  }
+\ExplSyntaxOff
+
+\scaletextbulletdebug
+
+\SetTextBulletFactor{0.4}
+
+\scaletextbulletdebug
+
+\textbullet
+\ScaleTextBullet{0.5}%
+\ScaleTextBullet{1.5}
+
+\ScaleTextBullet{1}\pangram
+\newline
+\ScaleTextBullets{2}\pangram
+\newline
+\ScaleTextBullets{3}\pangram
+\newline
+\ScaleTextBullets{4}\pangram
+\newline
+\ScaleTextBullets{5}\pangram
+
+\ScaleTextBullets{1}\ScaleTextBullets{2}\ScaleTextBullets{3}\ScaleTextBullets{4}\ScaleTextBullets{5}
+
+\begin{itemize}
+  \item Item 1
+  \item Item 2
+  \begin{itemize}
+    \item Item 2.1
+    \item Item 2.2
+    \begin{itemize}
+      \item Item 2.2,1
+      \item Item 2.2.2
+    \end{itemize}
+    \item 2.3
+  \end{itemize}
+\end{itemize}
+
+\parbox{0pt}{hello---wo}
+
+\parbox{0pt}{hello--wo}
+
+\parbox{0pt}{hello\textemdash  world}
+
+\parbox{0pt}{hello\textendash  world}
+
+
+\end{document}
