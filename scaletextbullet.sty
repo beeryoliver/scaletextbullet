@@ -118,35 +118,6 @@
       { \__scaletextbullet_scaletextbullets:n {#2} }
       { \__scaletextbullet_scaletextbullets:nn {#1} {#2} }
   }
-\cs_new_protected:Npn \__scaletextbullet_scaletextbullets:nn #1#2
-  {
-    \fp_set:Nn  \l__scaletextbullet_tmp_fp  {#1}
-    \int_set:Nn \l__scaletextbullet_tmp_int {#2}
-    \int_compare:nNnTF \l__scaletextbullet_tmp_int > 0
-      {
-        \fp_compare:nNnTF \l__scaletextbullet_tmp_fp > \c_zero_fp
-          {
-            \__scaletextbullet_box_scale:Nn \l__scaletextbullet_tmp_box
-              { \l__scaletextbullet_tmp_fp }
-            \prg_replicate:nn { \l__scaletextbullet_tmp_int }
-              { \box_use:N \l__scaletextbullet_tmp_box }
-          }
-          {
-            \fp_compare:nNnF \l__scaletextbullet_tmp_fp = \c_zero_fp
-              {
-                \msg_error:nne { scaletextbullet } { scale-out-of-bounds }
-                  { \fp_use:N \l__scaletextbullet_tmp_fp }
-              }
-          }
-      }
-      {
-        \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
-          {
-            \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
-              \l__scaletextbullet_tmp_int
-          }
-      }
-  }
 \cs_new_protected:Npn \__scaletextbullet_scaletextbullets:n #1
   {
     \int_set:Nn \l__scaletextbullet_tmp_int {#1}
@@ -180,6 +151,35 @@
           { \l__scaletextbullet_tmp_fp }
         \prg_replicate:nn { \l__scaletextbullet_tmp_int }
           { \box_use:N \l__scaletextbullet_tmp_box }
+      }
+      {
+        \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
+          {
+            \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
+              \l__scaletextbullet_tmp_int
+          }
+      }
+  }
+\cs_new_protected:Npn \__scaletextbullet_scaletextbullets:nn #1#2
+  {
+    \fp_set:Nn  \l__scaletextbullet_tmp_fp  {#1}
+    \int_set:Nn \l__scaletextbullet_tmp_int {#2}
+    \int_compare:nNnTF \l__scaletextbullet_tmp_int > 0
+      {
+        \fp_compare:nNnTF \l__scaletextbullet_tmp_fp > \c_zero_fp
+          {
+            \__scaletextbullet_box_scale:Nn \l__scaletextbullet_tmp_box
+              { \l__scaletextbullet_tmp_fp }
+            \prg_replicate:nn { \l__scaletextbullet_tmp_int }
+              { \box_use:N \l__scaletextbullet_tmp_box }
+          }
+          {
+            \fp_compare:nNnF \l__scaletextbullet_tmp_fp = \c_zero_fp
+              {
+                \msg_error:nne { scaletextbullet } { scale-out-of-bounds }
+                  { \fp_use:N \l__scaletextbullet_tmp_fp }
+              }
+          }
       }
       {
         \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
