@@ -9,7 +9,7 @@
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
 \ProvidesExplPackage
   {scaletextbullet}
-  {2024-11-11}
+  {2024-11-12}
   {1.0.1}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
@@ -162,11 +162,11 @@
   }
 \cs_new_protected:Npn \__scaletextbullet_scaletextbullets:nn #1#2
   {
-    \fp_set:Nn  \l__scaletextbullet_tmp_fp  {#1}
-    \int_set:Nn \l__scaletextbullet_tmp_int {#2}
-    \int_compare:nNnTF \l__scaletextbullet_tmp_int > 0
+    \fp_set:Nn \l__scaletextbullet_tmp_fp {#1}
+    \fp_compare:nNnTF \l__scaletextbullet_tmp_fp > \c_zero_fp
       {
-        \fp_compare:nNnTF \l__scaletextbullet_tmp_fp > \c_zero_fp
+        \int_set:Nn \l__scaletextbullet_tmp_int {#2}
+        \int_compare:nNnTF \l__scaletextbullet_tmp_int > 0
           {
             \__scaletextbullet_box_scale:Nn \l__scaletextbullet_tmp_box
               { \l__scaletextbullet_tmp_fp }
@@ -174,18 +174,18 @@
               { \box_use:N \l__scaletextbullet_tmp_box }
           }
           {
-            \fp_compare:nNnF \l__scaletextbullet_tmp_fp = \c_zero_fp
+            \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
               {
-                \msg_error:nne { scaletextbullet } { scale-out-of-bounds }
-                  { \fp_use:N \l__scaletextbullet_tmp_fp }
+                \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
+                  \l__scaletextbullet_tmp_int
               }
           }
       }
       {
-        \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
+        \fp_compare:nNnF \l__scaletextbullet_tmp_fp = \c_zero_fp
           {
-            \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
-              \l__scaletextbullet_tmp_int
+            \msg_error:nne { scaletextbullet } { scale-out-of-bounds }
+              { \fp_use:N \l__scaletextbullet_tmp_fp }
           }
       }
   }

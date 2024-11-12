@@ -7,7 +7,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
-## [v1.0.1] - 2024-11-11
+## [v1.0.1] - 2024-11-12
 
 ### Added
 - The package now includes a CHANGELOG file.
