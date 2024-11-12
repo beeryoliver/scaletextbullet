@@ -16,11 +16,13 @@ Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 1.0.0\quad{}10 November 2024
+Version 1.0.1\quad{}12 November 2024
 
 
 \section{Introduction}
 \label{sec:intro}
+
+\subsection{About}
 
 The \pkg{scaletextbullet} package enables the user to resize the \cs{textbullet} without moving its vertical center, unlike direct usage of the \LaTeXe{} and \pkg{expl3} commands \cs{scalebox} and \cs{box_scale:}.
 This process is not fully automated\---the user must use \cs{SetTextBulletFactor} to set the \textbulletfactor{} to the correct value to display the resized \cs{textbullet} at the correct height.
@@ -30,6 +32,16 @@ One way of estimating the \textbulletfactor{} is by using \cs{scaletextbulletdeb
 This package provides a solution that works in text mode.
 For a solution that works only in math mode, see the linked \TeX{} Stack Exchange thread.%
 \footnote{\url{https://tex.stackexchange.com/questions/119319/how-to-correctly-shrink-the-bullets-of-itemize}}
+
+\subsection{Loading the package}
+
+\listheading{Requirements:}
+\begin{itemize}
+  \item \LaTeXe{} version 2023-11-01 or newer
+  \item \pkg{l3kernel} version 2023-10-10 or newer
+\end{itemize}
+
+You may need to ensure that your \LaTeX{} installation is up\-/to\-/date before using this package.
 
 
 \section{Commands}
@@ -71,8 +83,7 @@ This command is provided only to help the user estimate the \textbulletfactor{}.
 Prints \num{15} consecutive \cs{textbullet}s with decreasing sizes.
 The \cs{textbullet}s are followed by the original \cs{textbullet} inside a framed box.
 The framed box has width equal to the \textbulletfactor{} \texttimes{} the total width of the \cs{textbullet} (this includes its empty space).
-
-The \textbulletfactor{} is set to the correct value when the 15 consecutive \cs{textbullet}s have the same vertical center and the \cs{textbullet} fits nicely inside the framed box.
+The \textbulletfactor{} is set to the correct value when the \num{15} consecutive \cs{textbullet}s have the same vertical center and the \cs{textbullet} fits nicely inside the framed box.
 
 
 \section{Application}
@@ -148,7 +159,7 @@ This package allows the user to create nice\-/looking itemized lists using \cs{S
   \end{itemize}
 \end{multicols}
 
-Maybe the visual effect is more clear with different fonts.
+The visual effect may be more clear with different fonts.
 This example uses STIX Two Text and Source Serif 4, respectively.
 
 \begingroup

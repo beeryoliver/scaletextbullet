@@ -1,7 +1,7 @@
 % Package   : scaletextbullet -- Resize the \textbullet without changing its
 % vertical center
 % Copyright : 2024 (c) Oliver Beery <beeryoliver@gmail.com>
-% CTAN      : <ADD CTAN LINK HERE>
+% CTAN      : https://ctan.org/pkg/scaletextbullet
 % Repository: https://github.com/beeryoliver/scaletextbullet
 % License   : The LaTeX Project Public License 1.3c
 
@@ -9,8 +9,8 @@
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
 \ProvidesExplPackage
   {scaletextbullet}
-  {2024-11-10}
-  {1.0.0}
+  {2024-11-12}
+  {1.0.1}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
 % l3kernel version 2023-10-10 added many 'e'-variants.
@@ -118,35 +118,6 @@
       { \__scaletextbullet_scaletextbullets:n {#2} }
       { \__scaletextbullet_scaletextbullets:nn {#1} {#2} }
   }
-\cs_new_protected:Npn \__scaletextbullet_scaletextbullets:nn #1#2
-  {
-    \fp_set:Nn  \l__scaletextbullet_tmp_fp  {#1}
-    \int_set:Nn \l__scaletextbullet_tmp_int {#2}
-    \int_compare:nNnTF \l__scaletextbullet_tmp_int > 0
-      {
-        \fp_compare:nNnTF \l__scaletextbullet_tmp_fp > \c_zero_fp
-          {
-            \__scaletextbullet_box_scale:Nn \l__scaletextbullet_tmp_box
-              { \l__scaletextbullet_tmp_fp }
-            \prg_replicate:nn { \l__scaletextbullet_tmp_int }
-              { \box_use:N \l__scaletextbullet_tmp_box }
-          }
-          {
-            \fp_compare:nNnF \l__scaletextbullet_tmp_fp = \c_zero_fp
-              {
-                \msg_error:nne { scaletextbullet } { scale-out-of-bounds }
-                  { \fp_use:N \l__scaletextbullet_tmp_fp }
-              }
-          }
-      }
-      {
-        \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
-          {
-            \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
-              \l__scaletextbullet_tmp_int
-          }
-      }
-  }
 \cs_new_protected:Npn \__scaletextbullet_scaletextbullets:n #1
   {
     \int_set:Nn \l__scaletextbullet_tmp_int {#1}
@@ -186,6 +157,35 @@
           {
             \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
               \l__scaletextbullet_tmp_int
+          }
+      }
+  }
+\cs_new_protected:Npn \__scaletextbullet_scaletextbullets:nn #1#2
+  {
+    \fp_set:Nn \l__scaletextbullet_tmp_fp {#1}
+    \fp_compare:nNnTF \l__scaletextbullet_tmp_fp > \c_zero_fp
+      {
+        \int_set:Nn \l__scaletextbullet_tmp_int {#2}
+        \int_compare:nNnTF \l__scaletextbullet_tmp_int > 0
+          {
+            \__scaletextbullet_box_scale:Nn \l__scaletextbullet_tmp_box
+              { \l__scaletextbullet_tmp_fp }
+            \prg_replicate:nn { \l__scaletextbullet_tmp_int }
+              { \box_use:N \l__scaletextbullet_tmp_box }
+          }
+          {
+            \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
+              {
+                \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
+                  \l__scaletextbullet_tmp_int
+              }
+          }
+      }
+      {
+        \fp_compare:nNnF \l__scaletextbullet_tmp_fp = \c_zero_fp
+          {
+            \msg_error:nne { scaletextbullet } { scale-out-of-bounds }
+              { \fp_use:N \l__scaletextbullet_tmp_fp }
           }
       }
   }
