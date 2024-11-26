@@ -7,6 +7,14 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [v1.0.2] - 2024-11-25
+
+### Changed
+- Keys and commands that take an integer expression as a value or argument now
+  remove the extra tokens that were not part of the integer expression.
+
+### Changed
+
 ## [v1.0.1] - 2024-11-12
 
 ### Added
