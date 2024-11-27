@@ -9,8 +9,8 @@
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
 \ProvidesExplPackage
   {scaletextbullet}
-  {2024-11-12}
-  {1.0.1}
+  {2024-11-25}
+  {1.0.2}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
 % l3kernel version 2023-10-10 added many 'e'-variants.
@@ -24,6 +24,10 @@
       }
     \msg_critical:nn { scaletextbullet } { expl3-out-of-date }
   }
+
+% This package does not require any other packages!
+
+% SOME VARIABLES
 
 \tl_new:N \l__scaletextbullet_factor_tl
 \tl_set:Nn \l__scaletextbullet_factor_tl { 0.4 }
@@ -39,6 +43,24 @@
 \fp_new:N  \l__scaletextbullet_tmp_fp
 \box_new:N \l__scaletextbullet_tmp_box
 
+% SOME FUNCTIONS
+
+% Used to process user input. Sets an integer variable from an integer
+% expression and removes extra tokens.
+\cs_new_protected:Npn \__scaletextbullet_int_set_from_user:Nn #1#2
+  {
+    \afterassignment \use_none_delimit_by_q_stop:w
+      #1 = \numexpr #2 \relax
+    \q_stop
+  }
+% Argument processor
+\int_new:N \l__scaletextbullet_arg_process_int
+\cs_new_protected:Npn \__scaletextbullet_arg_process_int:n #1
+  {
+    \__scaletextbullet_int_set_from_user:Nn \l__scaletextbullet_arg_process_int
+      {#1}
+    \tl_set:NV \ProcessedArgument \l__scaletextbullet_arg_process_int
+  }
 % Lowers the \textbullet to the baseline, scales it by a factor of #2, and
 % then raises it back to the vertical center.
 % I have referenced code by the great egreg:
@@ -63,6 +85,8 @@
           { \box_use:N #1 }
       }
   }
+
+% MESSAGES
 
 \msg_new:nnn { scaletextbullet } { factor-out-of-bounds }
   { Invalid~ \iow_char:N \\textbullet~ factor~ '#1'~ \msg_line_context:. }
@@ -111,7 +135,8 @@
       }
   }
 
-\NewDocumentCommand \ScaleTextBullets { o m }
+\NewDocumentCommand \ScaleTextBullets
+  { o >{ \__scaletextbullet_arg_process_int:n } m }
   {
     \mode_leave_vertical:
     \IfNoValueTF {#1}
