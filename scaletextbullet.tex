@@ -16,7 +16,7 @@ Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 1.0.2\quad{}25 November 2024
+Version 1.0.3\quad{}9 December 2024
 
 
 \section{Introduction}
@@ -51,22 +51,26 @@ This package defines some commands whose argument takes a \meta{floating point e
 This syntax has the same representation as the arguments to \cs{fpeval} and \cs{inteval}, documented in \pkg{usrguide}.%
 \footnote{\url{https://ctan.org/pkg/usrguide}}
 
-\cs{SetTextBulletFactor} \marg{floating point expression}
-\KeepNextPar*
+\begin{mydisplaycode}
+  \cs{SetTextBulletFactor} \marg{floating point expression}
+\end{mydisplaycode}
 
 Sets the \textbulletfactor{} to the result of computing the \meta{floating point expression}.
 The \textbulletfactor{} is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
 This change is local to the current group.
 The initial \textbulletfactor{} is \num{0.4}\---this matches the dimensions of the \cs{textbullet} of the Latin Modern font at size \qty{10}{pt}.
+\pagebreak%manual
 
-\cs{ScaleTextBullet} \marg{floating point expression}
-\KeepNextPar*
+\begin{mydisplaycode}
+  \cs{ScaleTextBullet} \marg{floating point expression}
+\end{mydisplaycode}
 
 Prints a \cs{textbullet} with its size scaled by the result of computing the \meta{floating point expression}.
 The new \cs{textbullet} will be printed with the same vertical center only if the \textbulletfactor{} is set to the correct value.
 
-\cs{ScaleTextBullets} \oarg{floating point expression} \marg{integer expression}
-\KeepNextPar*
+\begin{mydisplaycode}
+  \cs{ScaleTextBullets} \oarg{floating point expression} \marg{integer expression}
+\end{mydisplaycode}
 
 Prints a number of \cs{textbullet}s equal to the value of \meta{integer expression} with about the same total area as the original \cs{textbullet}.%
 \footnote
@@ -76,8 +80,9 @@ Prints a number of \cs{textbullet}s equal to the value of \meta{integer expressi
 If the optional argument is used, the size of each \cs{textbullet} is instead scaled by the result of computing the \meta{floating point expression}.
 The new \cs{textbullet} will be printed with the same vertical center only if the \textbulletfactor{} is set to the correct value.
 
-\cs{scaletextbulletdebug}
-\KeepNextPar*
+\begin{mydisplaycode}
+  \cs{scaletextbulletdebug}
+\end{mydisplaycode}
 
 This command is provided only to help the user estimate the \textbulletfactor{}.
 Prints \num{15} consecutive \cs{textbullet}s with decreasing sizes.
