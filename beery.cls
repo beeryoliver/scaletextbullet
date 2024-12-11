@@ -4,7 +4,7 @@
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
 \ProvidesExplClass
   {beery}
-  {2024-11-25}
+  {2024-12-09}
   {}
   {}
 
@@ -26,6 +26,18 @@
 
 \RequirePackage { multicol }
 \RequirePackage { scaletextbullet }
+
+\RequirePackage { tcolorbox }
+\tcbuselibrary { breakable }
+\NewTColorBox { mydisplaycode } { }
+  {
+      size   = minimal
+    , left   = 2pt
+    , right  = 2pt
+    , top    = 2pt
+    , bottom = 2pt
+    , breakable
+  }
 
 % CUSTOM MACROS
 
