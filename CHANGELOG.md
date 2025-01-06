@@ -7,6 +7,14 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [v1.0.4] - 2025-01-03
+
+### Changed
+- The internal function that scales of the size of the `\textbullet` without
+  moving its vertical center now uses more accurate floating point
+  computations.
+- Code improvements.
+
 ## [v1.0.3] - 2024-12-09
 
 ### Changed

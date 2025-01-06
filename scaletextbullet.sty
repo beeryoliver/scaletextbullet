@@ -1,6 +1,6 @@
 % Package   : scaletextbullet -- Resize the \textbullet without changing its
 % vertical center
-% Copyright : 2024 (c) Oliver Beery <beeryoliver@gmail.com>
+% Copyright : 2024-2025 (c) Oliver Beery <beeryoliver@gmail.com>
 % CTAN      : https://ctan.org/pkg/scaletextbullet
 % Repository: https://github.com/beeryoliver/scaletextbullet
 % License   : The LaTeX Project Public License 1.3c
@@ -9,8 +9,8 @@
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
 \ProvidesExplPackage
   {scaletextbullet}
-  {2024-12-09}
-  {1.0.3}
+  {2025-01-03}
+  {1.0.4}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
 % l3kernel version 2023-10-10 added many 'e'-variants.
@@ -27,16 +27,26 @@
 
 % This package does not require any other packages!
 
+% MESSAGES
+
+\msg_new:nnn { scaletextbullet } { factor-out-of-bounds }
+  { Invalid~ \iow_char:N \\textbullet~ factor~ '#1'~ \msg_line_context:. }
+\msg_new:nnn { scaletextbullet } { scale-out-of-bounds }
+  { Invalid~ scale~ factor~ '#1'~ \msg_line_context:. }
+\msg_new:nnn { scaletextbullet } { count-out-of-bounds }
+  {
+    Invalid~ number~ of~ \iow_char:N \\textbullet s~ '#1'~ \msg_line_context:.
+  }
+
 % SOME VARIABLES
 
-\tl_new:N \l__scaletextbullet_factor_tl
-\tl_set:Nn \l__scaletextbullet_factor_tl { 0.4 }
+\fp_new:N \l__scaletextbullet_factor_fp
+\fp_set:Nn \l__scaletextbullet_factor_fp { 0.4 }
 
-% Used to speed up \ScaleTextBullets{2}, \ScaleTextBullets{3}, and
-% \ScaleTextBullets{4}.
-\fp_const:Nn \c__scaletextbullet_ii_fp  { 2 ^ -0.5 }
-\fp_const:Nn \c__scaletextbullet_iii_fp { 3 ^ -0.5 }
-\fp_const:Nn \c__scaletextbullet_iv_fp  { 0.5 }
+% Used only to speed up floating point calculations.
+\fp_const:Nn \c__scaletextbullet_one_half_fp { 0.5 }
+\fp_const:Nn \c__scaletextbullet_scaletextbullets_two_fp   { 2 ^ -0.5 }
+\fp_const:Nn \c__scaletextbullet_scaletextbullets_three_fp { 3 ^ -0.5 }
 
 % Scratch variables
 \int_new:N \l__scaletextbullet_tmp_int
@@ -54,12 +64,12 @@
     \q_stop
   }
 % Argument processor
-\int_new:N \l__scaletextbullet_arg_process_int
 \cs_new_protected:Npn \__scaletextbullet_arg_process_int:n #1
   {
-    \__scaletextbullet_int_set_from_user:Nn \l__scaletextbullet_arg_process_int
-      {#1}
-    \tl_set:NV \ProcessedArgument \l__scaletextbullet_arg_process_int
+    \group_begin:
+      \__scaletextbullet_int_set_from_user:Nn \l_tmpa_int {#1}
+    \exp_args:NNNV \group_end:
+    \tl_set:Nn \ProcessedArgument \l_tmpa_int
   }
 % Lowers the \textbullet to the baseline, scales it by a factor of #2, and
 % then raises it back to the vertical center.
@@ -71,9 +81,19 @@
   {
     \hbox_set:Nn #1 { \textbullet }
     \dim_set:Nn \l__scaletextbullet_bottom_dim
-      { \box_ht:N #1 - \l__scaletextbullet_factor_tl \box_wd:N #1 }
+      {
+        \box_ht:N #1
+        - \fp_to_dim:n
+          { \l__scaletextbullet_factor_fp * \dim_to_fp:n { \box_wd:N #1 } }
+      }
     \dim_set:Nn \l__scaletextbullet_center_dim
-      { ( \box_ht:N #1 + \l__scaletextbullet_bottom_dim ) / 2 }
+      {
+        \fp_to_dim:n
+          {
+            \dim_to_fp:n { \box_ht:N #1 + \l__scaletextbullet_bottom_dim }
+            * \c__scaletextbullet_one_half_fp
+          }
+      }
     \hbox_set:Nn #1
       {
         \box_move_down:nn { \l__scaletextbullet_bottom_dim } { \box_use:N #1 }
@@ -81,20 +101,16 @@
     \box_scale:Nnn #1 {#2} {#2}
     \hbox_set:Nn #1
       {
-        \box_move_up:nn { \l__scaletextbullet_center_dim - 0.5 \box_ht:N #1 }
+        \box_move_up:nn
+          {
+            \l__scaletextbullet_center_dim
+            - \fp_to_dim:n
+              {
+                \dim_to_fp:n { \box_ht:N #1 } * \c__scaletextbullet_one_half_fp
+              }
+          }
           { \box_use:N #1 }
       }
-  }
-
-% MESSAGES
-
-\msg_new:nnn { scaletextbullet } { factor-out-of-bounds }
-  { Invalid~ \iow_char:N \\textbullet~ factor~ '#1'~ \msg_line_context:. }
-\msg_new:nnn { scaletextbullet } { scale-out-of-bounds }
-  { Invalid~ scale~ factor~ '#1'~ \msg_line_context:. }
-\msg_new:nnn { scaletextbullet } { count-out-of-bounds }
-  {
-    Invalid~ number~ of~ \iow_char:N \\textbullet s~ '#1'~ \msg_line_context:.
   }
 
 % DOCUMENT COMMANDS
@@ -103,15 +119,11 @@
   { \__scaletextbullet_set_factor:n {#1} }
 \cs_new_protected:Npn \__scaletextbullet_set_factor:n #1
   {
-    \fp_set:Nn \l__scaletextbullet_tmp_fp {#1}
-    \fp_compare:nTF { \c_zero_fp < \l__scaletextbullet_tmp_fp <= \c_one_fp }
-      {
-        \tl_set:Ne \l__scaletextbullet_factor_tl
-          { \fp_use:N \l__scaletextbullet_tmp_fp }
-      }
+    \fp_set:Nn \l__scaletextbullet_factor_fp {#1}
+    \fp_compare:nF { \c_zero_fp < \l__scaletextbullet_factor_fp <= \c_one_fp }
       {
         \msg_error:nne { scaletextbullet } { factor-out-of-bounds }
-          { \fp_use:N \l__scaletextbullet_tmp_fp }
+          { \fp_use:N \l__scaletextbullet_factor_fp }
       }
   }
 
@@ -124,7 +136,7 @@
       {
         \__scaletextbullet_box_scale:Nn \l__scaletextbullet_tmp_box
           { \l__scaletextbullet_tmp_fp }
-        \box_use_drop:N \l__scaletextbullet_tmp_box
+        \box_use:N \l__scaletextbullet_tmp_box
       }
       {
         \fp_compare:nNnF \l__scaletextbullet_tmp_fp = \c_zero_fp
@@ -155,22 +167,22 @@
             { 2 }
             {
               \fp_set_eq:NN \l__scaletextbullet_tmp_fp
-                \c__scaletextbullet_ii_fp
+                \c__scaletextbullet_scaletextbullets_two_fp
             }
             { 3 }
             {
               \fp_set_eq:NN \l__scaletextbullet_tmp_fp
-                \c__scaletextbullet_iii_fp
+                \c__scaletextbullet_scaletextbullets_three_fp
             }
             { 4 }
             {
               \fp_set_eq:NN \l__scaletextbullet_tmp_fp
-                \c__scaletextbullet_iv_fp
+                \c__scaletextbullet_one_half_fp
             }
           }
           {
             \fp_set:Nn \l__scaletextbullet_tmp_fp
-              { \l__scaletextbullet_tmp_int ^ -0.5 }
+              { \int_use:N \l__scaletextbullet_tmp_int ^ -0.5 }
           }
         \__scaletextbullet_box_scale:Nn \l__scaletextbullet_tmp_box
           { \l__scaletextbullet_tmp_fp }
@@ -178,7 +190,7 @@
           { \box_use:N \l__scaletextbullet_tmp_box }
       }
       {
-        \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
+        \int_if_zero:nF { \l__scaletextbullet_tmp_int }
           {
             \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
               \l__scaletextbullet_tmp_int
@@ -199,7 +211,7 @@
               { \box_use:N \l__scaletextbullet_tmp_box }
           }
           {
-            \int_compare:nNnF \l__scaletextbullet_tmp_int = 0
+            \int_if_zero:nF { \l__scaletextbullet_tmp_int }
               {
                 \msg_error:nnV { scaletextbullet } { count-out-of-bounds }
                   \l__scaletextbullet_tmp_int
@@ -226,12 +238,17 @@
         \fp_set:Nn \l__scaletextbullet_tmp_fp { ##1 ^ -0.5 }
         \__scaletextbullet_box_scale:Nn \l__scaletextbullet_tmp_box
           { \l__scaletextbullet_tmp_fp }
-        \box_use_drop:N \l__scaletextbullet_tmp_box
+        \box_use:N \l__scaletextbullet_tmp_box
       }
     \,
     \group_begin:
       \dim_set:Nn \fboxrule { 0.1pt }
       \dim_zero:N \fboxsep
-      \framebox [ \l__scaletextbullet_factor_tl \width ] { \textbullet }
+      \framebox
+        [
+          \fp_to_dim:n
+            { \l__scaletextbullet_factor_fp * \dim_to_fp:n { \width } }
+        ]
+        { \textbullet }
     \group_end:
   }
