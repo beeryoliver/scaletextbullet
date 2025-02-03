@@ -1,16 +1,18 @@
-% Package   : scaletextbullet -- Resize the \textbullet without changing its
-% vertical center
-% Copyright : 2024-2025 (c) Oliver Beery <beeryoliver@gmail.com>
-% CTAN      : https://ctan.org/pkg/scaletextbullet
-% Repository: https://github.com/beeryoliver/scaletextbullet
-% License   : The LaTeX Project Public License 1.3c
+%%% Package   : scaletextbullet -- Resize the \textbullet without changing its
+%%% vertical center
+%%% Copyright : 2024-2025 (c) Oliver Beery <beeryoliver@gmail.com>
+%%% CTAN      : https://ctan.org/pkg/scaletextbullet
+%%% Repository: https://github.com/beeryoliver/scaletextbullet
+%%% License   : The LaTeX Project Public License 1.3c
+
+%%> \section{Loading the package}
 
 % LaTeX2e version 2023-11-01 added \IfExplAtLeastTF.
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
 \ProvidesExplPackage
   {scaletextbullet}
-  {2025-01-03}
-  {1.0.4}
+  {2025-02-03}
+  {1.1.0}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
 % l3kernel version 2023-10-10 added many 'e'-variants.
@@ -27,19 +29,21 @@
 
 % This package does not require any other packages!
 
-% MESSAGES
+%%> \section{Messages}
 
+% \textbullet is invalid in math mode.
+\msg_new:nnn { scaletextbullet } { math-mode-error }
+  { '#1'~ cannot~ be~ used~ in~ math~ mode~ \msg_line_context:. }
 \msg_new:nnn { scaletextbullet } { factor-out-of-bounds }
   { Invalid~ \iow_char:N \\textbullet~ factor~ '#1'~ \msg_line_context:. }
 \msg_new:nnn { scaletextbullet } { scale-out-of-bounds }
   { Invalid~ scale~ factor~ '#1'~ \msg_line_context:. }
 \msg_new:nnn { scaletextbullet } { count-out-of-bounds }
-  {
-    Invalid~ number~ of~ \iow_char:N \\textbullet s~ '#1'~ \msg_line_context:.
-  }
+  { Invalid~ number~ of~ \iow_char:N \\textbullet~ '#1'~ \msg_line_context:. }
 
-% SOME VARIABLES
+%%> \section{Some variables}
 
+% The \textbullet factor
 \fp_new:N \l__scaletextbullet_factor_fp
 \fp_set:Nn \l__scaletextbullet_factor_fp { 0.4 }
 
@@ -53,10 +57,10 @@
 \fp_new:N  \l__scaletextbullet_tmp_fp
 \box_new:N \l__scaletextbullet_tmp_box
 
-% SOME FUNCTIONS
+%%> \section{Some functions}
 
 % Used to process user input. Sets an integer variable from an integer
-% expression and removes extra tokens.
+% expression and removes extra trailing tokens, if any.
 \cs_new_protected:Npn \__scaletextbullet_int_set_from_user:Nn #1#2
   {
     \afterassignment \use_none_delimit_by_q_stop:w
@@ -67,9 +71,9 @@
 \cs_new_protected:Npn \__scaletextbullet_arg_process_int:n #1
   {
     \group_begin:
-      \__scaletextbullet_int_set_from_user:Nn \l_tmpa_int {#1}
+      \__scaletextbullet_int_set_from_user:Nn \l__scaletextbullet_tmp_int {#1}
     \exp_args:NNNV \group_end:
-    \tl_set:Nn \ProcessedArgument \l_tmpa_int
+    \tl_set:Nn \ProcessedArgument \l__scaletextbullet_tmp_int
   }
 % Lowers the \textbullet to the baseline, scales it by a factor of #2, and
 % then raises it back to the vertical center.
@@ -82,16 +86,16 @@
     \hbox_set:Nn #1 { \textbullet }
     \dim_set:Nn \l__scaletextbullet_bottom_dim
       {
-        \box_ht:N #1
-        - \fp_to_dim:n
+        \box_ht:N #1 -
+        \fp_to_dim:n
           { \l__scaletextbullet_factor_fp * \dim_to_fp:n { \box_wd:N #1 } }
       }
     \dim_set:Nn \l__scaletextbullet_center_dim
       {
         \fp_to_dim:n
           {
-            \dim_to_fp:n { \box_ht:N #1 + \l__scaletextbullet_bottom_dim }
-            * \c__scaletextbullet_one_half_fp
+            \dim_to_fp:n { \box_ht:N #1 + \l__scaletextbullet_bottom_dim } *
+            \c__scaletextbullet_one_half_fp
           }
       }
     \hbox_set:Nn #1
@@ -103,8 +107,8 @@
       {
         \box_move_up:nn
           {
-            \l__scaletextbullet_center_dim
-            - \fp_to_dim:n
+            \l__scaletextbullet_center_dim -
+            \fp_to_dim:n
               {
                 \dim_to_fp:n { \box_ht:N #1 } * \c__scaletextbullet_one_half_fp
               }
@@ -113,7 +117,7 @@
       }
   }
 
-% DOCUMENT COMMANDS
+%%> \section{Document commands}
 
 \NewDocumentCommand \SetTextBulletFactor { m }
   { \__scaletextbullet_set_factor:n {#1} }
@@ -128,7 +132,15 @@
   }
 
 \NewDocumentCommand \ScaleTextBullet { m }
-  { \mode_leave_vertical: \__scaletextbullet_scaletextbullet:n {#1} }
+  {
+    \mode_leave_vertical:
+    \mode_if_math:TF
+      {
+        \msg_error:nne { scaletextbullet } { math-mode-error }
+          { \token_to_str:N \ScaleTextBullet }
+      }
+      { \__scaletextbullet_scaletextbullet:n {#1} }
+  }
 \cs_new_protected:Npn \__scaletextbullet_scaletextbullet:n #1
   {
     \fp_set:Nn \l__scaletextbullet_tmp_fp {#1}
@@ -151,9 +163,16 @@
   { o >{ \__scaletextbullet_arg_process_int:n } m }
   {
     \mode_leave_vertical:
-    \IfNoValueTF {#1}
-      { \__scaletextbullet_scaletextbullets:n {#2} }
-      { \__scaletextbullet_scaletextbullets:nn {#1} {#2} }
+    \mode_if_math:TF
+      {
+        \msg_error:nne { scaletextbullet } { math-mode-error }
+          { \token_to_str:N \ScaleTextBullets }
+      }
+      {
+        \IfNoValueTF {#1}
+          { \__scaletextbullet_scaletextbullets:n {#2} }
+          { \__scaletextbullet_scaletextbullets:nn {#1} {#2} }
+      }
   }
 \cs_new_protected:Npn \__scaletextbullet_scaletextbullets:n #1
   {
@@ -228,7 +247,15 @@
   }
 
 \NewDocumentCommand \scaletextbulletdebug { }
-  { \mode_leave_vertical: \__scaletextbullet_debug: }
+  {
+    \mode_leave_vertical:
+    \mode_if_math:TF
+      {
+        \msg_error:nne { scaletextbullet } { math-mode-error }
+          { \token_to_str:N \scaletextbulletdebug }
+      }
+      { \__scaletextbullet_debug: }
+  }
 % I have referenced code by the great egreg:
 % https://tex.stackexchange.com/questions/620507/how-to-resize-textbullet-without-the-bullet-moving-down
 \cs_new_protected:Npn \__scaletextbullet_debug:

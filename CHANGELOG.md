@@ -7,6 +7,17 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [v1.1.0] - 2025-02-03
+
+### Added
+- `scaletextbullet-code.tex`
+- `scaletextbullet-code.pdf`
+
+### Changed
+- `\ScaleTextBullet`, `\ScaleTextBullets`, and `\scaletextbulletdebug` now
+  issue a package error if used in math mode. (`\textbullet` is invalid in math
+  mode.)
+
 ## [v1.0.4] - 2025-01-03
 
 ### Changed
