@@ -1,16 +1,43 @@
-% Note: This class is designed ONLY for 'scaletextbullet.tex'. Compiled with LuaTeX.
+% Note: This class is designed ONLY for 'scaletextbullet.tex'. Compiled with
+% LuaTeX.
+
+% LOADING THE CLASS
 
 % LaTeX2e version 2023-11-01 added \IfExplAtLeastTF.
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
 \ProvidesExplClass
   {beery}
-  {2025-01-03}
+  {2025-02-03}
+  {0.0.0}
   {}
-  {}
+
+\prop_gput:Nnn \g_msg_module_type_prop { beery } { Class }
+
+% l3kernel version 2023-10-10 added many 'e'-variants.
+\IfExplAtLeastTF { 2023-10-10 } { }
+  {
+    \msg_new:nnn { beery } { expl3-out-of-date }
+      {
+        The~ beery~ class~ could~ not~ load.~
+        This~ class~ requires~
+        L3~ programming~ layer~ version~ 2023-10-10~ or~ newer.
+      }
+    \msg_critical:nn { beery } { expl3-out-of-date }
+  }
+
+\sys_if_engine_luatex:F
+  {
+    \msg_new:nnn { beery } { luatex-required }
+      { The~ beery~ class~ could~ not~ load.~ This~ class~ requires~ LuaTeX. }
+    \msg_critical:nn { beery } { luatex-required }
+  }
 
 \LoadClass { article }
 
-\box_new:N \l__beery_tmp_box
+% MESSAGES
+
+\msg_new:nnn { beery } { math-mode-error }
+  { '#1'~ cannot~ be~ used~ in~ math~ mode~ \msg_line_context:. }
 
 \RequirePackage { fontscale }
 \fontscalesetup { musical }
@@ -39,59 +66,167 @@
     , breakable
   }
 
+% SOME VARIABLES
+
+\fp_const:Nn \c_beery_golden_ratio_fp { 1.6180 3398 8749 8948 }
+\tl_const:Nn \c_beery_alphabet_tl { abcdefghijklmnopqrstuvwxyz }
+\tl_const:Nn \c_beery_digits_tl { 0123456789 }
+
+\regex_const:Nn \c__beery_ends_in_letter_regex { ^.*[A-Za-z]$ }
+
+% Scratch variables
+\box_new:N \l__beery_tmp_box
+
 % CUSTOM MACROS
 
-\tl_const:Nn \c_beery_alphabet_tl { abcdefghijklmnopqrstuvwxyz }
 \NewExpandableDocumentCommand \alphabet { } { \c_beery_alphabet_tl }
+\NewExpandableDocumentCommand \digits { } { \c_beery_digits_tl }
+\NewExpandableDocumentCommand \pangram { }
+  { The~ quick~ brown~ fox~ jumps~ over~ the~ lazy~ dog. }
+
 \NewDocumentCommand \Key
   { >{ \TrimSpaces } m >{ \TrimSpaces } o >{ \TrimSpaces } o }
   {
     \mode_leave_vertical:
+    \IfNoValueTF {#2}
+      { \__beery_print_key:n {#1} }
+      {
+        \IfNoValueTF {#3}
+          { \__beery_print_key:nn {#1} {#2} }
+          { \__beery_print_key:nnn {#1} {#2} {#3} }
+      }
+  }
+\cs_new_protected:Npn \__beery_print_key:n #1 { \texttt {#1} }
+\cs_new_protected:Npn \__beery_print_key:nn #1#2
+  { \texttt { #1 \ensuremath { \,=\, } \allowbreak #2 } }
+\cs_new_protected:Npn \__beery_print_key:nnn #1#2#3
+  {
     \group_begin:
       \ttfamily
-      \IfNoValueTF {#3}
-        {
-          \IfNoValueTF {#2}
-            {#1}
-            { #1 $\,=\,$ \allowbreak #2 }
-        }
-        { #1 $\,=\,$ #2 \hspace* { \fill } \hbox:n { initial $\,=\,$ #3 } }
+      #1 \ensuremath { \,=\, } #2 \hspace* { \fill }
+      \hbox:n { initial \ensuremath { \,=\, } #3 }
     \group_end:
   }
-\NewDocumentCommand \Value { >{ \TrimSpaces } m } { \texttt {#1} }
-\NewDocumentCommand \cmd { >{ \TrimSpaces } m }
-  { \texttt { \token_to_str:N #1 } \@ }
+\NewDocumentCommand \Value { >{ \TrimSpaces } m }
+  {
+    \mode_if_math:TF
+      {
+        \msg_error:nne { beery } { math-mode-error }
+          { \token_to_str:N \Value }
+      }
+      { \__beery_print_value:n {#1} }
+  }
+\cs_new_protected:Npn \__beery_print_value:n #1 { \texttt {#1} \@ }
 \NewDocumentCommand \cs { >{ \TrimSpaces } m }
+  {
+    \mode_if_math:TF
+      { \msg_error:nne { beery } { math-mode-error } { \token_to_str:N \cs } }
+      { \__beery_print_cs:n {#1} }
+  }
+\cs_new_protected:Npn \__beery_print_cs:n #1
   { \texttt { \token_to_str:c {#1} } \@ }
 \NewDocumentCommand \marg { >{ \TrimSpaces } m }
+  { \__beery_print_m_arg:n {#1} }
+\cs_new_protected:Npn \__beery_print_m_arg:n #1
   {
     \allowbreak
     \texttt { \c_left_brace_str }
-    $\langle$
-    { \normalfont \itshape #1 }
-    $\rangle$
+    \ensuremath \langle
+    \group_begin:
+      \normalfont \itshape #1
+    \group_end:
+    \ensuremath \rangle
     \texttt { \c_right_brace_str }
   }
 \NewDocumentCommand \oarg { >{ \TrimSpaces } m }
+  { \__beery_print_o_arg:n {#1} }
+\cs_new_protected:Npn \__beery_print_o_arg:n #1
   {
     \allowbreak
     \texttt { [ }
-    $\langle$
-    { \normalfont \itshape #1 }
-    $\rangle$
+    \ensuremath \langle
+    \group_begin:
+      \normalfont \itshape #1
+    \group_end:
+    \ensuremath \rangle
     \texttt { ] }
   }
-\NewDocumentCommand \sarg { } { $\langle$ \texttt {*} $\rangle$ }
-\NewDocumentCommand \meta { >{ \TrimSpaces } m }
+\NewDocumentCommand \sarg { } { \__beery_print_s_arg: }
+\cs_new_protected:Npn \__beery_print_s_arg:
+  { \ensuremath \langle \texttt {*} \ensuremath \rangle }
+\NewDocumentCommand \meta { >{ \TrimSpaces } m } { \__beery_print_meta:n {#1} }
+\cs_new_protected:Npn \__beery_print_meta:n #1
   {
-    $\langle$
-    { \normalfont \itshape #1 }
-    $\rangle$
+    \ensuremath \langle
+    \group_begin:
+      \normalfont \itshape #1
+    \group_end:
+    \ensuremath \rangle
   }
-\NewDocumentCommand \cls { >{ \TrimSpaces } m } { \textsf {#1} }
-\NewDocumentCommand \env { >{ \TrimSpaces } m } { \texttt {#1} }
-\NewDocumentCommand \pkg { >{ \TrimSpaces } m } { \textsf {#1} }
-\NewDocumentCommand \latin { >{ \TrimSpaces } m } { \textit {#1} }
+\NewDocumentCommand \cls { >{ \TrimSpaces } m }
+  {
+    \mode_if_math:TF
+      { \msg_error:nne { beery } { math-mode-error } { \token_to_str:N \cls } }
+      { \__beery_print_cls:n {#1} }
+  }
+\cs_new_protected:Npn \__beery_print_cls:n #1 { \textsf {#1} \@ }
+\NewDocumentCommand \env { >{ \TrimSpaces } m }
+  {
+    \mode_if_math:TF
+      { \msg_error:nne { beery } { math-mode-error } { \token_to_str:N \env } }
+      { \__beery_print_env:n {#1} }
+  }
+\cs_new_protected:Npn \__beery_print_env:n #1 { \texttt {#1} \@ }
+\NewDocumentCommand \pkg { >{ \TrimSpaces } m }
+  {
+    \mode_if_math:TF
+      { \msg_error:nne { beery } { math-mode-error } { \token_to_str:N \pkg } }
+      { \__beery_print_pkg:n {#1} }
+  }
+\cs_new_protected:Npn \__beery_print_pkg:n #1 { \textsf {#1} \@ }
+\NewDocumentCommand \latin { >{ \TrimSpaces } m }
+  {
+    \mode_if_math:TF
+      {
+        \msg_error:nne { beery } { math-mode-error }
+          { \token_to_to_str:N \latin }
+      }
+      { \__beery_print_latin:n {#1} }
+  }
+\cs_new_protected:Npn \__beery_print_latin:n #1 { \textit {#1} }
+
+\NewDocumentCommand \AllCaps { O { 50 } >{ \TrimSpaces } m }
+  {
+    \mode_if_math:TF
+      {
+        \msg_error:nne { beery } { math-mode-error }
+          { \token_to_str:N \AllCaps }
+      }
+      { \__beery_text_all_caps:nn {#1} {#2} }
+  }
+\cs_new_protected:Npn \__beery_text_all_caps:nn #1#2
+  {
+    \textls [ \int_eval:n {#1} ] { \text_uppercase:n {#2} }
+    \regex_match:NnT \c__beery_ends_in_letter_regex {#2} { \@ }
+  }
+\NewDocumentCommand \AllSmallCaps
+  { >{ \ReverseBoolean } s O { 50 } >{ \TrimSpaces } m }
+  {
+    \mode_if_math:TF
+      {
+        \msg_error:nne { beery } { math-mode-error }
+          { \token_to_str:N \AllSmallCaps }
+      }
+      {
+        \IfBooleanTF #1
+          { \__beery_text_small_caps:nn {#2} {#3} }
+          { \__beery_text_lowercase_small_caps:nn {#2} {#3} }
+      }
+  }
+\cs_new_protected:Npn \__beery_text_small_caps:nn #1#2
+  { \textls [ \int_eval:n {#1} ] { \scshape #2 } }
+\cs_new_protected:Npn \__beery_text_lowercase_small_caps:nn #1#2
+  { \textls [ \int_eval:n {#1} ] { \scshape \text_lowercase:n {#2} } }
 
 % PAGE STYLE
 
@@ -123,33 +258,39 @@
 \skip_log:N \c_beery_medium_skip
 \skip_log:N \c_beery_small_skip
 
+% \flushbottom
 \raggedbottom
 \int_set:Nn \vbadness { 100 }
 
 \skip_set:Nn \topskip { \l_fontscale_normalsize_size_dim }
 \skip_set_eq:NN \splittopskip \topskip
+
 \RequirePackage { geometry }
+\dim_const:Nn \c_beery_textwidth_dim
+  { \fp_to_dim:n { \c_e_fp * \dim_to_fp:n { \c_beery_alphabet_dim } } }
+\dim_const:Nn \c_beery_textheight_dim
+  {
+    \fp_to_dim:n
+      { \c_beery_golden_ratio_fp * \dim_to_fp:n { \c_beery_textwidth_dim } }
+  }
+\dim_const:Nn \c_beery_footskip_dim
+  { \c_beery_big_dim + \l_fontscale_footnotesize_baselineskip_skip }
 \geometry
   {
       a4paper
-    , textwidth =
-        \fp_to_dim:n { \c_e_fp * \dim_to_fp:n { \c_beery_alphabet_dim } }
-    , textheight =
-        \fp_to_dim:n
-          { 1.6180 * \c_e_fp * \dim_to_fp:n { \c_beery_alphabet_dim } }
+    , textwidth = \c_beery_textwidth_dim
+    , textheight = \c_beery_textheight_dim
     , heightrounded
     , centering
     , headheight = \l_fontscale_footnotesize_baselineskip_skip
     , headsep = \c_beery_big_dim
-    , footskip =
-        \dim_eval:n
-          { \c_beery_big_dim + \l_fontscale_footnotesize_baselineskip_skip }
+    , footskip = \c_beery_footskip_dim
   }
 
 \RequirePackage { fancyhdr }
 \pagestyle { fancy }
 \fancyhf { }
-\renewcommand \headrulewidth { 0pt }
+\cs_set:Npn \headrulewidth { 0pt }
 \fancyfoot [ C ]
   { \footnotesize \thepage \c_space_tl of~ \pageref { LastPage } }
 
@@ -159,16 +300,20 @@
 \linespread { 1 }
 \RequirePackage [ skip = \c_beery_medium_skip ] { parskip }
 \RequirePackage [ raggedrightboxes ] { ragged2e }
-\skip_set:Nn \RaggedRightRightskip { 0pt plus 0.5 \linewidth }
+\skip_set:Nn \RaggedRightRightskip { \c_zero_dim plus \c_beery_alphabet_dim }
 \dim_zero:N \RaggedRightParindent
 \dim_set_eq:NN \JustifyingParindent \RaggedRightParindent
 \RaggedRight
+% \justifying
+\RequirePackage { microtype }
+\microtypesetup { protrusion = false , expansion = false }
 \int_set:Nn \pretolerance { -1 }
 \int_set:Nn \tolerance { 200 }
 \dim_zero:N \emergencystretch
 \int_set:Nn \widowpenalty { 10000 }
 \int_set_eq:NN \clubpenalty \widowpenalty
 \int_set_eq:NN \displaywidowpenalty \widowpenalty
+% hyphenation
 \int_set:Nn \hyphenpenalty { 99 }
 \int_set_eq:NN \exhyphenpenalty \hyphenpenalty
 
@@ -179,7 +324,7 @@
 \setcounter { tocdepth } { 2 }
 
 \titlespacing* \section % section
-  { 0pt } % indent
+  { \c_zero_dim } % indent
   {
     \c_beery_big_dim
     plus  \fp_to_dim:n { 1 / 2 * 4 * \dim_to_fp:n { \c_beery_big_dim } }
@@ -187,7 +332,7 @@
   } % before
   { \c_beery_medium_skip } % after
 \titlespacing* \subsection
-  { 0pt }
+  { \c_zero_dim }
   {
     \fp_to_dim:n { 4 / 3 * \dim_to_fp:n { \c_beery_medium_dim } }
     plus  \fp_to_dim:n { 1 / 2 * 4 * \dim_to_fp:n { \c_beery_medium_dim } }
@@ -219,50 +364,61 @@
       leftmargin = *
     , labelsep  = 0.5em
       % vertical spacing
-    , topsep    = 0pt
-    , partopsep = 0pt
+    , topsep    = \c_zero_skip
+    , partopsep = \c_zero_skip
     , parsep    = \c_beery_small_skip
-    , itemsep   = 0pt
+    , itemsep   = \c_zero_skip
   }
 \setlist [ itemize   , 1 ] { label = \textbullet }
 \setlist [ itemize   , 2 ] { label = \ScaleTextBullets { 2 } }
 \setlist [ itemize   , 3 ] { label = \ScaleTextBullets { 3 } }
+\setlist [ itemize   , 4 ] { label = \ScaleTextBullets { 4 } }
 \setlist [ enumerate , 1 ] { label = \arabic* . }
-\setlist [ enumerate , 2 ] { label = \theenumi  \arabic* . }
-\setlist [ enumerate , 3 ] { label = \theenumii \arabic* . }
+\setlist [ enumerate , 2 ] { label = \theenumi   \arabic* . }
+\setlist [ enumerate , 3 ] { label = \theenumii  \arabic* . }
+\setlist [ enumerate , 4 ] { label = \theenumiii \arabic* . }
 
 % list headings
 % https://tex.stackexchange.com/questions/2644/how-to-prevent-a-page-break-before-an-itemize-list
-\NewDocumentCommand \KeepNextPar { s }
+\NewDocumentCommand \KeepNextPar { > { \ReverseBoolean } s }
   {
-    \par
-    \IfBooleanTF #1
+    \mode_if_math:TF
       {
-        \int_compare:nNnT { \prevgraf } = { 1 }
-          { \nobreak \@afterheading }
+        \msg_error:nne { beery } { math-mode-error }
+          { \token_to_str:N \KeepNextPar }
       }
+      {
+        \IfBooleanTF #1
+          { \__beery_keep_next_par: }
+          { \__beery_keep_next_par_if_single_line: }
+      }
+  }
+\cs_new_protected:Npn \__beery_keep_next_par: { \nobreak \@afterheading }
+\cs_new_protected:Npn \__beery_keep_next_par_if_single_line:
+  {
+    \int_compare:nNnT \prevgraf = 1
       { \nobreak \@afterheading }
   }
 \NewDocumentCommand \listheading { m }
   {
+    \mode_if_math:TF
+      {
+        \msg_error:nne { beery } { math-mode-error }
+          { \token_to_str:N \listheading }
+      }
+      { \__beery_typeset_list_heading:n {#1} }
+  }
+\cs_new_protected:Npn \__beery_typeset_list_heading:n #1
+  {
     \par
     #1
     \par
-    \int_compare:nNnT { \prevgraf } = { 1 }
+    \int_compare:nNnT \prevgraf = 1
       { \nobreak \@afterheading }
     \vspace { \skip_eval:n { \c_beery_small_skip - \parskip } }
   }
 
 % TABLES
-
-\renewcommand \bottomfraction { 1 }
-\renewcommand \topfraction { 1 }
-\skip_set:Nn \textfloatsep
-  {
-    \c_beery_big_dim
-    plus \c_beery_big_dim
-    minus \fp_to_dim:n { \dim_to_fp:n { \c_beery_big_dim } / 3 }
-  }
 
 \RequirePackage { tabularray }
 \UseTblrLibrary { booktabs , siunitx }
@@ -270,7 +426,7 @@
 % FOOTNOTES
 
 \RequirePackage [ bottom ] { footmisc }
-\renewcommand \footnoterule { }
+\cs_set_protected:Npn \footnoterule { }
 % \setlength { \skip \footins } { \c_beery_big_skip }
 \dim_set:Nn \footnotesep { \f@linespread \footnotesep }
 \coffin_new:N \l__beery_footnote_coffin
@@ -280,11 +436,11 @@
   {
     \fp_to_dim:n
       {
-        ( 1.2 * \f@linespread - 1 )
-        * \dim_to_fp:n { \l_fontscale_footnotesize_size_dim }
+        ( 1.2 * \f@linespread - 1 ) *
+        \dim_to_fp:n { \l_fontscale_footnotesize_size_dim }
       }
   }
-\RenewDocumentCommand \@makefntext { +m }
+\cs_set_protected:Npn \@makefntext #1
   {
     \vcoffin_set:Nnn \l__beery_footnote_coffin { \textwidth }
       {
@@ -294,8 +450,8 @@
               {
                 \fp_to_dim:n
                   {
-                    ( 1 - \l_fontscale_footnotesize_scale_fp ) / 2
-                    * \dim_to_fp:n { \textwidth }
+                    ( 1 - \l_fontscale_footnotesize_scale_fp ) / 2 *
+                    \dim_to_fp:n { \textwidth }
                   }
               }
             \dim_set_eq:NN \rightmargin \leftmargin
@@ -306,7 +462,7 @@
         \item #1 \endlist
       }
     \coffin_typeset:Nnnnn \l__beery_footnote_coffin { l } { b }
-      { 0pt } { - \c_beery_footnote_baselineheight_dim }
+      { \c_zero_dim } { - \c_beery_footnote_baselineheight_dim }
   }
 
 % REFERENCES
