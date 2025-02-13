@@ -11,8 +11,8 @@
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
 \ProvidesExplPackage
   {scaletextbullet}
-  {2025-02-06}
-  {1.1.1}
+  {2025-02-11}
+  {2.0.0}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
 % l3kernel version 2023-10-10 added many 'e'-variants.
@@ -20,7 +20,7 @@
   {
     \msg_new:nnn { scaletextbullet } { l3kernel-out-of-date }
       {
-        The~ scaletextbullet~ package~ could~ not~ load.~
+        The~ scaletextbullet~ package~ could~ not~ load. \\
         This~ package~ requires~
         L3~ programming~ layer~ version~ 2023-10-10~ or~ later.
       }
@@ -101,7 +101,7 @@
 
 %%> \section{Document commands}
 
-\NewDocumentCommand \SetTextBulletFactor { m }
+\NewDocumentCommand \settextbulletfactor { m }
   { \__scaletextbullet_set_factor:n {#1} }
 \cs_new_protected:Npn \__scaletextbullet_set_factor:n #1
   {
@@ -113,13 +113,13 @@
       }
   }
 
-\NewDocumentCommand \ScaleTextBullet { m }
+\NewDocumentCommand \scaletextbullet { m }
   {
     \mode_leave_vertical:
     \mode_if_math:TF
       {
         \msg_error:nne { scaletextbullet } { math-mode-error }
-          { \token_to_str:N \ScaleTextBullet }
+          { \token_to_str:N \scaletextbullet }
       }
       { \__scaletextbullet_scaletextbullet:n {#1} }
   }
@@ -141,13 +141,13 @@
       }
   }
 
-\NewDocumentCommand \ScaleTextBullets { o m }
+\NewDocumentCommand \scaletextbullets { o m }
   {
     \mode_leave_vertical:
     \mode_if_math:TF
       {
         \msg_error:nne { scaletextbullet } { math-mode-error }
-          { \token_to_str:N \ScaleTextBullets }
+          { \token_to_str:N \scaletextbullets }
       }
       {
         \IfNoValueTF {#1}

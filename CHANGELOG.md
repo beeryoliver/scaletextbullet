@@ -7,6 +7,15 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [v2.0.0] - 2025-02-11
+
+### Changed
+- This update includes some changes that are backwards incompatible.
+- Renamed the document commands using the recommended all-lowercase convention:
+  - `\SetTextBulletFactor` to `\settextbulletfactor`
+  - `\ScaleTextBullet` to `\scaletextbullet`
+  - `\ScaleTextBullets` to `\scaletextbullets`
+
 ## [v1.1.1] - 2025-02-06
 
 ### Changed
