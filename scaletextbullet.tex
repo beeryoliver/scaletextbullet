@@ -6,17 +6,13 @@
 \begin{document}
 
 
-\section*
-  {%
-    \SetFontStep*{1}%
-    The \pkg{scaletextbullet} package%
-  }
+\section*{\setfontstep*{1}The \pkg{scaletextbullet} package}
 
 Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.0\quad{}11 February 2025
+Version 2.0.1\quad{}4 April 2025
 
 
 \section{Introduction}
@@ -25,7 +21,7 @@ Version 2.0.0\quad{}11 February 2025
 \subsection{About}
 
 The \pkg{scaletextbullet} package enables the user to resize the \cs{textbullet} without moving its vertical center, unlike direct usage of the \LaTeXe{} and \pkg{expl3} commands \cs{scalebox} and \cs{box_scale:}.
-This process is not fully automated\---the user must use \cs{settextbulletfactor} to set the \textbulletfactor{} to the correct value to display the resized \cs{textbullet} at the correct height.
+This process is not fully automated---the user must use \cs{settextbulletfactor} to set the \textbulletfactor{} to the correct value to display the resized \cs{textbullet} at the correct height.
 The \textbulletfactor{} is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
 One way of estimating the \textbulletfactor{} is by using \cs{scaletextbulletdebug}.
 
@@ -41,7 +37,9 @@ For a solution that works only in math mode, see the linked \TeX{} Stack Exchang
   \item \pkg{l3kernel} version 2023-10-10 or newer
 \end{itemize}
 
-You may need to ensure that your \LaTeX{} installation is up\-/to\-/date before using this package.
+You may need to ensure that your \LaTeX{} installation is up-to-date before using this package.
+
+\pkg{scaletextbullet} does not load any other packages.
 
 
 \section{Commands}
@@ -50,40 +48,41 @@ You may need to ensure that your \LaTeX{} installation is up\-/to\-/date before 
 This package defines some commands whose argument takes a \meta{floating point expression} or \meta{integer expression}.
 This syntax has the same representation as the arguments to \cs{fpeval} and \cs{inteval}, documented in \pkg{usrguide}.
 
-\begin{mydisplaycode}
+\begin{displaycode}
   \cs{settextbulletfactor} \marg{floating point expression}
-\end{mydisplaycode}
+\end{displaycode}
 
 Sets the \textbulletfactor{} to the result of computing the \meta{floating point expression}.
 The \textbulletfactor{} is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
 The scope of the effect is local to the current group.
-The initial \textbulletfactor{} is \num{0.4}\---this matches the dimensions of the \cs{textbullet} of the Latin Modern font at size \qty{10}{pt}.
-\pagebreak%manual
+The initial \textbulletfactor{} is \num{0.4}---this matches the dimensions of the \cs{textbullet} of the Latin Modern font at size \qty{10}{pt}.
 
-\begin{mydisplaycode}
+\begin{displaycode}
   \cs{scaletextbullet} \marg{floating point expression}
-\end{mydisplaycode}
+\end{displaycode}
 
 Prints a \cs{textbullet} with its size scaled by the result of computing the \meta{floating point expression}.
+Does nothing if the result of computing the \meta{floating point expression} is zero.
 The new \cs{textbullet} will be printed with the same vertical center only if the \textbulletfactor{} is set to the correct value.
 Cannot be used in math mode.
 
-\begin{mydisplaycode}
+\begin{displaycode}
   \cs{scaletextbullets} \oarg{floating point expression} \marg{integer expression}
-\end{mydisplaycode}
+\end{displaycode}
 
 Prints a number of \cs{textbullet}s equal to the value of \meta{integer expression} with about the same total area as the original \cs{textbullet}.%
 \footnote
-  {%
-    In calculating the total area, I have approximated each \cs{textbullet} as a perfect circle, but, of course, the actual shape depends on the font used.%
+  {
+    In calculating the total area, I have approximated each \cs{textbullet} as a perfect circle, but, of course, the actual shape depends on the font used.
   }
 If the optional argument is used, the size of each \cs{textbullet} is instead scaled by the result of computing the \meta{floating point expression}.
+Does nothing if the value of \meta{integer expression} or the result of computing the \meta{floating point expression} is zero.
 The new \cs{textbullet} will be printed with the same vertical center only if the \textbulletfactor{} is set to the correct value.
 Cannot be used in math mode.
 
-\begin{mydisplaycode}
+\begin{displaycode}
   \cs{scaletextbulletdebug}
-\end{mydisplaycode}
+\end{displaycode}
 
 This command is provided only to help the user estimate the \textbulletfactor{}.
 Prints \num{15} consecutive \cs{textbullet}s with decreasing sizes.
@@ -96,7 +95,7 @@ Cannot be used in math mode.
 \section{Application}
 \label{sec:application}
 
-I wrote this package primarily to create nicer\-/looking itemized lists.
+I wrote this package primarily to create nicer-looking itemized lists.
 The default list labels in \LaTeX{} (and other programs) fail to communicate the list level within the list hierarchy:
 
 \begin{multicols}{2}
@@ -143,7 +142,7 @@ This contrasts with traditional enumerated list structures where the list level 
   \end{enumerate}
 \end{multicols}
 
-This package allows the user to create nice\-/looking itemized lists using \cs{scaletextbullets}:
+This package allows the user to create nice-looking itemized lists using \cs{scaletextbullets}:
 
 \begin{multicols}{2}
   \begin{itemize}

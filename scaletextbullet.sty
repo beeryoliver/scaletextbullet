@@ -9,10 +9,7 @@
 
 % LaTeX2e version 2023-11-01 added \IfExplAtLeastTF.
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
-\ProvidesExplPackage
-  {scaletextbullet}
-  {2025-02-11}
-  {2.0.0}
+\ProvidesExplPackage{scaletextbullet}{2025-04-04}{2.0.1}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
 % l3kernel version 2023-10-10 added many 'e'-variants.
@@ -47,8 +44,8 @@
 
 % Used only to speed up floating point calculations.
 \fp_const:Nn \c__scaletextbullet_one_half_fp { 0.5 }
-\fp_const:Nn \c__scaletextbullet_scaletextbullets_two_fp   { 2 ^ -0.5 }
-\fp_const:Nn \c__scaletextbullet_scaletextbullets_three_fp { 3 ^ -0.5 }
+\fp_const:Nn \c__scaletextbullet_scale_textbullets_two_fp   { 2 ^ -0.5 }
+\fp_const:Nn \c__scaletextbullet_scale_textbullets_three_fp { 3 ^ -0.5 }
 
 % Scratch variables
 \int_new:N \l__scaletextbullet_tmp_int
@@ -59,10 +56,11 @@
 
 % Lowers the \textbullet to the baseline, scales it by a factor of #2, and
 % then raises it back to the vertical center.
-% I have referenced code by the great egreg:
+% I have referenced code by the user egreg:
 % https://tex.stackexchange.com/questions/620507/how-to-resize-textbullet-without-the-bullet-moving-down
-\dim_new:N \l__scaletextbullet_bottom_dim % bottom of \textbullet
-\dim_new:N \l__scaletextbullet_center_dim % center of \textbullet
+% the bottom and center of \textbullet
+\dim_new:N \l__scaletextbullet_bottom_dim
+\dim_new:N \l__scaletextbullet_center_dim
 \cs_new_protected:Npn \__scaletextbullet_box_scale:Nn #1#2
   {
     \hbox_set:Nn #1 { \textbullet }
@@ -121,9 +119,9 @@
         \msg_error:nne { scaletextbullet } { math-mode-error }
           { \token_to_str:N \scaletextbullet }
       }
-      { \__scaletextbullet_scaletextbullet:n {#1} }
+      { \__scaletextbullet_scale_textbullet:n {#1} }
   }
-\cs_new_protected:Npn \__scaletextbullet_scaletextbullet:n #1
+\cs_new_protected:Npn \__scaletextbullet_scale_textbullet:n #1
   {
     \fp_set:Nn \l__scaletextbullet_tmp_fp {#1}
     \fp_compare:nNnTF \l__scaletextbullet_tmp_fp > \c_zero_fp
@@ -151,11 +149,11 @@
       }
       {
         \IfNoValueTF {#1}
-          { \__scaletextbullet_scaletextbullets:n {#2} }
-          { \__scaletextbullet_scaletextbullets:nn {#1} {#2} }
+          { \__scaletextbullet_scale_textbullets:n {#2} }
+          { \__scaletextbullet_scale_textbullets:nn {#1} {#2} }
       }
   }
-\cs_new_protected:Npn \__scaletextbullet_scaletextbullets:n #1
+\cs_new_protected:Npn \__scaletextbullet_scale_textbullets:n #1
   {
     \int_set:Nn \l__scaletextbullet_tmp_int {#1}
     \int_compare:nNnTF \l__scaletextbullet_tmp_int > 0
@@ -167,12 +165,12 @@
             { 2 }
             {
               \fp_set_eq:NN \l__scaletextbullet_tmp_fp
-                \c__scaletextbullet_scaletextbullets_two_fp
+                \c__scaletextbullet_scale_textbullets_two_fp
             }
             { 3 }
             {
               \fp_set_eq:NN \l__scaletextbullet_tmp_fp
-                \c__scaletextbullet_scaletextbullets_three_fp
+                \c__scaletextbullet_scale_textbullets_three_fp
             }
             { 4 }
             {
@@ -197,7 +195,7 @@
           }
       }
   }
-\cs_new_protected:Npn \__scaletextbullet_scaletextbullets:nn #1#2
+\cs_new_protected:Npn \__scaletextbullet_scale_textbullets:nn #1#2
   {
     \fp_set:Nn \l__scaletextbullet_tmp_fp {#1}
     \fp_compare:nNnTF \l__scaletextbullet_tmp_fp > \c_zero_fp
@@ -237,7 +235,7 @@
       }
       { \__scaletextbullet_debug: }
   }
-% I have referenced code by the great egreg:
+% I have referenced code by the user egreg:
 % https://tex.stackexchange.com/questions/620507/how-to-resize-textbullet-without-the-bullet-moving-down
 \cs_new_protected:Npn \__scaletextbullet_debug:
   {
@@ -250,8 +248,8 @@
       }
     \,
     \group_begin:
-      \dim_set:Nn \fboxrule { 0.1pt }
-      \dim_zero:N \fboxsep
+      \setlength \fboxrule { 0.1pt }
+      \setlength \fboxsep { 0pt }
       \framebox
         [
           \fp_to_dim:n
