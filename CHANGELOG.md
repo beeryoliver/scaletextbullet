@@ -7,15 +7,28 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [v2.0.2] - 2025-09-22
+
+### Changed
+- Improved documentation.
+- Performance improvement when scaling the size of the `\textbullet`.
+- `\settextbulletfactor` can no longer be used in math mode.
+- `\scaletextbullet` and `\scaletextbullets` now issue a warning if the new
+  `\textbullet` would have zero dimensions.
+- `\scaletextbullets` now issues a warning if no `\textbullet`s would be
+  printed.
+
+### Fixed
+- The package now correctly uses `\fp_to_tl:` to display floating point
+  numbers.
+
 ## [v2.0.1] - 2025-04-04
 
 ### Changed
-- The documentation now states that `scaletextbullet` does not load any other
-  packages.
-- The documentation now states that `\scaletextbullet` does nothing if its
-  argument evaluates to zero.
-- The documentation now states that `\scaletextbullets` does nothing if any of
-  its arguments evaluates to zero.
+- The documentation now states that:
+  - `scaletextbullet` does not load any other packages.
+  - `\scaletextbullet` does nothing if its argument evaluates to zero.
+  - `\scaletextbullets` does nothing if any of its arguments evaluates to zero.
 
 ### Fixed
 - The package now correctly uses `\setlength` when setting `LaTeX2e` lengths.
