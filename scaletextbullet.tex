@@ -9,13 +9,13 @@
 \begin{document}
 
 
-\section*{\stepfontsize{1}The \pkg{scaletextbullet} package}
+\section*{\Large The \pkg{scaletextbullet} package}
 
 Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.2\quad 22 September 2025
+Version 2.0.2\quad 28 September 2025
 
 
 \section{Introduction}
@@ -56,7 +56,7 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and \cs{int
 
 \begin{function}{\settextbulletfactor}
   \begin{syntax}
-    \cs{settextbulletfactor} \marg{fp expr}
+    \cs{settextbulletfactor}\marg{fp expr}
   \end{syntax}
   Sets the \cs{textbullet} factor to the result of evaluating the \meta{fp expr}.
   The \cs{textbullet} factor is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
@@ -66,7 +66,7 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and \cs{int
 
 \begin{function}{\scaletextbullet}
   \begin{syntax}
-    \cs{scaletextbullet} \marg{fp expr}
+    \cs{scaletextbullet}\marg{fp expr}
   \end{syntax}
   Prints a \cs{textbullet} with its size scaled by a factor equal to the result of evaluating the \meta{fp expr}.
   The new \cs{textbullet} will be printed with the same vertical center only if the \cs{textbullet} factor is set to the correct value.
@@ -84,7 +84,7 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and \cs{int
 
 \begin{function}{\scaletextbullets}
   \begin{syntax}
-    \cs{scaletextbullets} \oarg{fp expr} \marg{int expr}
+    \cs{scaletextbullets}\oarg{fp expr}\marg{int expr}
   \end{syntax}
   Prints a number of \cs{textbullet}s equal to the result of evaluating the \meta{int expr} with about the same total area as the original \cs{textbullet}.\footnotemark{}
   Adding the optional argument instead scales the size of each \cs{textbullet} by a factor equal to the result of evaluating the \meta{fp expr}.
