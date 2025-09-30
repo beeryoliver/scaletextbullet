@@ -1,35 +1,40 @@
 \documentclass{beery}
 
-\NewDocumentCommand\textbulletfactor{}{\cs{textbullet} factor}
+
+\RequirePackage { fontspec }
+\newfontfamily \newfontfamilystixtwo { STIX Two Text }
+\newfontfamily \newfontfamilysourceseriffour { Source Serif 4 }
 
 
 \begin{document}
 
 
-\section*{\setfontstep*{1}The \pkg{scaletextbullet} package}
+\section*{\Large The \pkg{scaletextbullet} package}
 
 Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.1\quad{}4 April 2025
+Version 2.0.2\quad 28 September 2025
 
 
 \section{Introduction}
 \label{sec:intro}
 
 \subsection{About}
+\label{subsec:about}
 
 The \pkg{scaletextbullet} package enables the user to resize the \cs{textbullet} without moving its vertical center, unlike direct usage of the \LaTeXe{} and \pkg{expl3} commands \cs{scalebox} and \cs{box_scale:}.
-This process is not fully automated---the user must use \cs{settextbulletfactor} to set the \textbulletfactor{} to the correct value to display the resized \cs{textbullet} at the correct height.
-The \textbulletfactor{} is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
-One way of estimating the \textbulletfactor{} is by using \cs{scaletextbulletdebug}.
+This process is not fully automated---the user must use \cs{settextbulletfactor} to set the \cs{textbullet} factor to the correct value to display the resized \cs{textbullet} at the correct height.
+The \cs{textbullet} factor is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
+One way of estimating the \cs{textbullet} factor is by using \cs{scaletextbulletdebug}.
 
 This package provides a solution that works only in text mode.
 For a solution that works only in math mode, see the linked \TeX{} Stack Exchange thread.%
 \footnote{\url{https://tex.stackexchange.com/questions/119319/how-to-correctly-shrink-the-bullets-of-itemize}}
 
 \subsection{Loading the package}
+\label{subsec:loading}
 
 \listheading{Requirements:}
 \begin{itemize}
@@ -37,59 +42,82 @@ For a solution that works only in math mode, see the linked \TeX{} Stack Exchang
   \item \pkg{l3kernel} version 2023-10-10 or newer
 \end{itemize}
 
-You may need to ensure that your \LaTeX{} installation is up-to-date before using this package.
+\pkg{scaletextbullet} does not load or require any other packages.
 
-\pkg{scaletextbullet} does not load any other packages.
+\subsection{Syntax}
+\label{subsec:syntax}
+
+This documentation uses the syntaxes \meta{fp expr} and \meta{int expr}.
+These syntaxes have the same meaning as the arguments to \cs{fpeval} and \cs{inteval}, respectively, which are documented in \pkg{usrguide}.
 
 
 \section{Commands}
 \label{sec:commands}
 
-This package defines some commands whose argument takes a \meta{floating point expression} or \meta{integer expression}.
-This syntax has the same representation as the arguments to \cs{fpeval} and \cs{inteval}, documented in \pkg{usrguide}.
+\begin{function}{\settextbulletfactor}
+  \begin{syntax}
+    \cs{settextbulletfactor}\marg{fp expr}
+  \end{syntax}
+  Sets the \cs{textbullet} factor to the result of evaluating the \meta{fp expr}.
+  The \cs{textbullet} factor is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
+  The scope of the effect is local to the current group.
+  The initial \cs{textbullet} factor is \num{0.4}---this matches the dimensions of the \cs{textbullet} of the Latin Modern font at size \qty{10}{pt}.
+\end{function}
 
-\begin{displaycode}
-  \cs{settextbulletfactor} \marg{floating point expression}
-\end{displaycode}
+\begin{function}{\scaletextbullet}
+  \begin{syntax}
+    \cs{scaletextbullet}\marg{fp expr}
+  \end{syntax}
+  Prints a \cs{textbullet} with its size scaled by a factor equal to the result of evaluating the \meta{fp expr}.
+  The new \cs{textbullet} will be printed with the same vertical center only if the \cs{textbullet} factor is set to the correct value.
 
-Sets the \textbulletfactor{} to the result of computing the \meta{floating point expression}.
-The \textbulletfactor{} is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
-The scope of the effect is local to the current group.
-The initial \textbulletfactor{} is \num{0.4}---this matches the dimensions of the \cs{textbullet} of the Latin Modern font at size \qty{10}{pt}.
+  \listheading{Some exceptions:}
+  \begin{itemize}
+    \item
+    Issues an error if the result of evaluating the \meta{fp expr} is a negative number.
+    \item
+    Issues a warning if the new \cs{textbullet} would have zero dimensions.
+    \item
+    Cannot be used in math mode.
+  \end{itemize}
+\end{function}
 
-\begin{displaycode}
-  \cs{scaletextbullet} \marg{floating point expression}
-\end{displaycode}
+\begin{function}{\scaletextbullets}
+  \begin{syntax}
+    \cs{scaletextbullets}\oarg{fp expr}\marg{int expr}
+  \end{syntax}
+  Prints a number of \cs{textbullet}s equal to the result of evaluating the \meta{int expr} with about the same total area as the original \cs{textbullet}.\footnotemark{}
+  Adding the optional argument instead scales the size of each \cs{textbullet} by a factor equal to the result of evaluating the \meta{fp expr}.
+  The new \cs{textbullet} will be printed with the same vertical center only if the \cs{textbullet} factor is set to the correct value.
 
-Prints a \cs{textbullet} with its size scaled by the result of computing the \meta{floating point expression}.
-Does nothing if the result of computing the \meta{floating point expression} is zero.
-The new \cs{textbullet} will be printed with the same vertical center only if the \textbulletfactor{} is set to the correct value.
-Cannot be used in math mode.
-
-\begin{displaycode}
-  \cs{scaletextbullets} \oarg{floating point expression} \marg{integer expression}
-\end{displaycode}
-
-Prints a number of \cs{textbullet}s equal to the value of \meta{integer expression} with about the same total area as the original \cs{textbullet}.%
-\footnote
-  {
-    In calculating the total area, I have approximated each \cs{textbullet} as a perfect circle, but, of course, the actual shape depends on the font used.
+  \listheading{Some exceptions:}
+  \begin{itemize}
+    \item
+    Issues an error if the result of evaluating the \meta{int expr} or \meta{fp expr} is a negative number.
+    \item
+    Issues a warning if no \cs{textbullet}s would be printed.
+    \item
+    Issues a warning if the new \cs{textbullet} would have zero dimensions.
+    \item
+    Cannot be used in math mode.
+  \end{itemize}
+\end{function}
+\footnotetext
+  {%
+    In calculating the total area, I have approximated each \cs{textbullet} as a perfect circle, but, of course, the actual shape depends on the font used.%
   }
-If the optional argument is used, the size of each \cs{textbullet} is instead scaled by the result of computing the \meta{floating point expression}.
-Does nothing if the value of \meta{integer expression} or the result of computing the \meta{floating point expression} is zero.
-The new \cs{textbullet} will be printed with the same vertical center only if the \textbulletfactor{} is set to the correct value.
-Cannot be used in math mode.
 
-\begin{displaycode}
-  \cs{scaletextbulletdebug}
-\end{displaycode}
-
-This command is provided only to help the user estimate the \textbulletfactor{}.
-Prints \num{15} consecutive \cs{textbullet}s with decreasing sizes.
-The \cs{textbullet}s are followed by the original \cs{textbullet} inside a framed box.
-The framed box has width equal to the \textbulletfactor{} \texttimes{} the total width of the \cs{textbullet} (this includes its empty space).
-The \textbulletfactor{} is set to the correct value when the \num{15} consecutive \cs{textbullet}s have the same vertical center and the \cs{textbullet} fits nicely inside the framed box.
-Cannot be used in math mode.
+\begin{function}{\scaletextbulletdebug}
+  \begin{syntax}
+    \cs{scaletextbulletdebug}
+  \end{syntax}
+  This command is provided only to help the user estimate the \cs{textbullet} factor.
+  Prints \num{15} consecutive \cs{textbullet}s with decreasing sizes.
+  The \cs{textbullet}s are followed by the original \cs{textbullet} inside a framed box.
+  The framed box has width equal to the \cs{textbullet} factor \texttimes{} the total width of the \cs{textbullet} (this includes its empty space).
+  The \cs{textbullet} factor is set to the correct value when the \num{15} consecutive \cs{textbullet}s have the same vertical center and the \cs{textbullet} fits nicely inside the framed box.
+  Cannot be used in math mode.
+\end{function}
 
 
 \section{Application}
@@ -222,20 +250,14 @@ This example uses STIX Two Text and Source Serif 4, respectively.
 \section{Implementation notes}
 \label{sec:implementation}
 
-The procedure of resizing the \cs{textbullet} without changing its vertical center, including the definition of the \textbulletfactor{}, makes an important assumption:
+The procedure of resizing the \cs{textbullet} without changing its vertical center, including the definition of the \cs{textbullet} factor, makes an important assumption:
 That the \cs{textbullet} is a perfect circle.
 Of course, this is not completely accurate and the actual shape depends on the font used.
-This means that the \textbulletfactor{} may not be exactly the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
+This means that the \cs{textbullet} factor may not be exactly the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
 
 In writing this package, I have referenced a comment on the \TeX{} Stack Exchange by the user egreg.%
 \footnote{\url{https://tex.stackexchange.com/questions/620507/how-to-resize-textbullet-without-the-bullet-moving-down/638599\#638599}}
 This package uses the same procedure for resizing the \cs{textbullet} without changing its vertical center.
-
-
-\section{Programming}
-\label{sec:programming}
-
-This package is written in \pkg{expl3}, but does not provide any public functions or variables.
 
 
 \end{document}

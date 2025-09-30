@@ -1,10 +1,24 @@
 \documentclass{article}
 
-
 \usepackage{parskip}
 \usepackage{geometry}
-\geometry{a4paper}
+\geometry{a4paper,heightrounded,centering,textwidth=420pt}
 \raggedbottom\raggedright
+
+\usepackage{fontscale}
+\fontscalesetup
+  {
+      tiny         = 5pt
+    , scriptsize   = 7pt
+    , footnotesize = 8pt
+    , small        = 9pt
+    , normalsize   = 10pt
+    , large        = 12pt
+    , Large        = 14.4pt
+    , LARGE        = 17.28pt
+    , huge         = 20.74pt
+    , Huge         = 24.88pt
+  }
 
 \usepackage{codehigh}
 
@@ -17,13 +31,13 @@
 
 \section*{\Large The \textsf{scaletextbullet} package}
 
-Resize the \texttt{\textbackslash{}textbullet} without changing its vertical center
+Resize the \texttt{\string\textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.1\quad{}4 April 2025
+Version 2.0.2\quad 28 September 2025
 
-\dochighinput[language=latex/latex3]{scaletextbullet.sty}%
+\dochighinput[language=latex/latex3]{scaletextbullet.sty}
 
 
 \end{document}
