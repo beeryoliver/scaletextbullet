@@ -7,6 +7,15 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [v2.0.3] - 2025-10-14
+
+### Changed
+- The package now requires `l3kernel` version 2023-11-01.
+
+### Fixed
+- Added a space after every `\iow_char:N \\` in `scaletextbullet.sty` to make
+  the `codehigh` package typeset the code with the correct color syntax.
+
 ## [v2.0.2] - 2025-09-28
 
 ### Changed
