@@ -7,51 +7,49 @@
 
 %%> \section{Loading the package}
 
-% LaTeX2e version 2023-11-01 added \IfExplAtLeastTF.
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
-\ProvidesExplPackage{scaletextbullet}{2025-09-28}{2.0.2}
+\ProvidesExplPackage{scaletextbullet}{2025-10-14}{2.0.3}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
 \msg_new:nnn { scaletextbullet } { l3kernel }
   {
     The~ scaletextbullet~ package~ could~ not~ load. \\
     This~ package~ requires~
-    L3~ programming~ layer~ version~ 2023-10-10~ or~ later.
+    L3~ programming~ layer~ version~ 2023-11-01~ or~ later.
   }
-% l3kernel version 2023-10-10 added many 'e'-variants.
-\IfExplAtLeastTF { 2023-10-10 } { }
+\IfExplAtLeastTF { 2023-11-01 } { }
   { \msg_critical:nn { scaletextbullet } { l3kernel } }
 
 %%> \section{Messages}
 
 \msg_new:nnn { scaletextbullet } { math-mode-invalid }
-  { '\iow_char:N \\#1'~ invalid~ in~ math~ mode~ \msg_line_context:. }
+  { '\iow_char:N \\ #1'~ invalid~ in~ math~ mode~ \msg_line_context:. }
 \msg_new:nnn { scaletextbullet } { factor-invalid }
-  { Invalid~ \iow_char:N \\textbullet~ factor~ '#1'~ \msg_line_context:. }
+  { Invalid~ \iow_char:N \\ textbullet~ factor~ '#1'~ \msg_line_context:. }
 \msg_new:nnn { scaletextbullet } { scale-invalid }
   { Invalid~ scale~ factor~ '#1'~ \msg_line_context:. }
 \msg_new:nnn { scaletextbullet } { count-invalid }
   {
-    Invalid~ number~ of~ \iow_char:N \\textbullet~ s~ '#1'~ \msg_line_context:.
+    Invalid~ number~ of~ \iow_char:N \\ textbullet~ s~ '#1'~
+    \msg_line_context:.
   }
 \msg_new:nnn { scaletextbullet } { scale-zero }
   {
-    The~ new~ \iow_char:N \\textbullet~ would~ have~ zero~ dimensions~
+    The~ new~ \iow_char:N \\ textbullet~ would~ have~ zero~ dimensions~
     \msg_line_context:.
   }
 \msg_new:nnn { scaletextbullet } { count-zero }
-  { No~ \iow_char:N \\textbullet~ s~ were~ printed~ \msg_line_context:. }
+  { No~ \iow_char:N \\ textbullet~ s~ were~ printed~ \msg_line_context:. }
 
 %%> \section{Some variables}
 
-% The \textbullet factor
 \fp_new:N \l__scaletextbullet_factor_fp
 \fp_set:Nn \l__scaletextbullet_factor_fp { 0.4 }
 \int_new:N \l__scaletextbullet_count_int
 \fp_new:N \l__scaletextbullet_scale_fp
 \box_new:N \l__scaletextbullet_textbullet_box
 
-% Used only to speed up floating point calculations.
+% Used only to speed up floating point computations.
 \fp_const:Nn \c__scaletextbullet_count_two_fp   { 0.7071 0678 1186 5475 }
 \fp_const:Nn \c__scaletextbullet_count_three_fp { 0.5773 5026 9189 6258 }
 \fp_const:Nn \c__scaletextbullet_count_four_fp  { 0.5 }
