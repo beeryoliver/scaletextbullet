@@ -7,6 +7,11 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [v2.0.4] - 2025-10-27
+
+### Fixed
+- The typeset code now prints the title in the correct font size.
+
 ## [v2.0.3] - 2025-10-14
 
 ### Changed
