@@ -15,7 +15,7 @@ Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.4\quad 27 October 2025
+Version 2.0.4\quad 5 November 2025
 
 
 \section{Introduction}
@@ -57,8 +57,8 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and \cs{int
     \cs{settextbulletfactor}\marg{fp expr}
   \end{syntax}
   Sets the \cs{textbullet} factor to the result of evaluating the \meta{fp expr}.
+  This assignment is local to the current group.
   The \cs{textbullet} factor is the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
-  The scope of the effect is local to the current group.
   The initial \cs{textbullet} factor is \num{0.4}---this matches the dimensions of the \cs{textbullet} of the Latin Modern font at size \qty{10}{pt}.
 \end{function}
 
@@ -254,7 +254,7 @@ Of course, this is not completely accurate and the actual shape depends on the f
 This means that the \cs{textbullet} factor may not be exactly the ratio of the width of the \cs{textbullet}, excluding its empty space, to its width, including its empty space.
 
 In writing this package, I have referenced a comment on the \TeX{} Stack Exchange by the user egreg.%
-\footnote{\url{https://tex.stackexchange.com/questions/620507/how-to-resize-textbullet-without-the-bullet-moving-down/638599\#638599}}
+\footnote{\url{https://tex.stackexchange.com/questions/620507/how-to-resize-textbullet-without-the-bullet-moving-down}}
 This package uses the same procedure for resizing the \cs{textbullet} without changing its vertical center.
 
 
