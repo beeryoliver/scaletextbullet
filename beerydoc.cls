@@ -609,7 +609,6 @@
 % FOOTNOTES
 
 \RequirePackage [ bottomfloats , ragged ] { footmisc }
-% \cs_set_protected:Npn \footnoterule { }
 % \setlength { \skip \footins } { \c_beerydoc_big_skip }
 \setlength \footnotesep { \f@linespread \footnotesep }
 \coffin_new:N \l__beerydoc_footnote_coffin
@@ -617,15 +616,17 @@
   {
     \vcoffin_set:Nnn \l__beerydoc_footnote_coffin { \textwidth }
       {
-        \list { }
+        \hbox_set:Nn \l__beerydoc_tmp_box { \@thefnmark . }
+        \list { \box_use:N \l__beerydoc_tmp_box }
           {
-            \setlength \leftmargin { 0pt }
-            \setlength \rightmargin { \leftmargin }
-            % \setlength \labelsep { 0.5em }
+            \setlength \labelsep { 0.5em }
             \setlength \topsep { 0pt }
             \setlength \partopsep { 0pt }
+            \setlength \leftmargin
+              { \dim_eval:n { \box_wd:N \l__beerydoc_tmp_box + \labelsep } }
+            \setlength \rightmargin { \leftmargin }
           }
-        \item \@thefnmark .~ \tl_trim_spaces:n {#1} \endlist
+        \item #1 \endlist
       }
     \coffin_typeset:Nnnnn \l__beerydoc_footnote_coffin { l } { b }
       { \c_zero_dim } { \c_zero_dim }
