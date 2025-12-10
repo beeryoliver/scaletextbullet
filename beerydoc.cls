@@ -1,7 +1,7 @@
 % LOADING THE CLASS
 
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
-\ProvidesExplClass{beerydoc}{2025-12-06}{0.0.0}{}
+\ProvidesExplClass{beerydoc}{2025-12-08}{0.0.0}{}
 
 \prop_gput:Nnn \g_msg_module_type_prop { beerydoc } { Class }
 
@@ -19,11 +19,6 @@
 \sys_if_engine_luatex:F { \msg_critical:nn { beerydoc } { luatex } }
 
 \LoadClass { article }
-
-% MESSAGES
-
-\msg_new:nnn { beerydoc } { math-mode-invalid }
-  { '\iow_char:N \\ #1'~ invalid~ in~ math~ mode~ \msg_line_context:. }
 
 \RequirePackage { fontscale }
 \fontscalesetup { musical }
@@ -48,10 +43,7 @@
   { The~ quick~ brown~ fox~ jumps~ over~ the~ lazy~ dog. }
 
 \group_begin:
-  \char_set_active_eq:NN \  \scan_stop:
   \char_set_active_eq:NN | \scan_stop:
-  \tl_const:Ne \c__beerydoc_active_space_tl
-    { \char_generate:nn { `\  } { 13 } }
   \tl_const:Ne \c__beerydoc_active_vert_tl { \char_generate:nn { `| } { 13 } }
 \group_end:
 
@@ -153,6 +145,7 @@
       \bool_set_true:N \l__beerydoc_arg_bool
       \tl_set:Nn \l__beerydoc_cs_tl {#1}
       \__beerydoc_cs_replace_underscore:
+      \tl_replace_all:Nnn \l__beerydoc_cs_tl { \  } { \textvisiblespace }
       \tl_replace_all:NVn \l__beerydoc_cs_tl \c__beerydoc_active_vert_tl { | }
       \ttfamily
       \c_backslash_str \l__beerydoc_cs_tl \@
@@ -202,7 +195,7 @@
     \tl_if_in:NnT \l__beerydoc_meta_tl { expr }
       {
         \tl_replace_once:Non \l__beerydoc_meta_tl
-          { \c__beerydoc_active_space_tl expr } { ~expr }
+          { \c_catcode_active_space_tl expr } { ~expr }
         \__beerydoc_meta_replace_expr:nn
           { fp~ expr } { floating~ point~ expression }
           { int~ expr } { integer~ expression }
@@ -611,19 +604,22 @@
 \RequirePackage [ bottomfloats , ragged ] { footmisc }
 % \setlength { \skip \footins } { \c_beerydoc_big_skip }
 \setlength \footnotesep { \f@linespread \footnotesep }
+\box_new:N \l__beerydoc_footnote_box
 \coffin_new:N \l__beerydoc_footnote_coffin
 \cs_set_protected:Npn \@makefntext #1
   {
+    \hbox_set:Nn \l__beerydoc_footnote_box { \@thefnmark . }
     \vcoffin_set:Nnn \l__beerydoc_footnote_coffin { \textwidth }
       {
-        \hbox_set:Nn \l__beerydoc_tmp_box { \@thefnmark . }
-        \list { \box_use:N \l__beerydoc_tmp_box }
+        \list { \box_use:N \l__beerydoc_footnote_box }
           {
             \setlength \labelsep { 0.5em }
             \setlength \topsep { 0pt }
             \setlength \partopsep { 0pt }
             \setlength \leftmargin
-              { \dim_eval:n { \box_wd:N \l__beerydoc_tmp_box + \labelsep } }
+              {
+                \dim_eval:n { \box_wd:N \l__beerydoc_footnote_box + \labelsep }
+              }
             \setlength \rightmargin { \leftmargin }
           }
         \item #1 \endlist
@@ -657,3 +653,8 @@
     \tl_map_inline:nn { \pkg \cls \env \hook \socket \plug }
       { \cs_set_eq:NN #1 \__beerydoc_pdfstring_tl_to_str:n }
   }
+
+% MESSAGES
+
+\msg_new:nnn { beerydoc } { math-mode-invalid }
+  { '\iow_char:N \\ #1'~ invalid~ in~ math~ mode~ \msg_line_context:. }
