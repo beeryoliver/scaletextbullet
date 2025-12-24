@@ -15,7 +15,7 @@ Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.5\quad 18 December 2025
+Version 2.0.5\quad 23 December 2025
 
 
 \section{Introduction}
@@ -101,7 +101,13 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
   \end{syntax}
   Prints a number of \cs{textbullet}s equal to the result of evaluating the
   \meta{int expr} with about the same total area as the original
-  \cs{textbullet}.\footnotemark{}
+  \cs{textbullet}.%
+  \footnote
+    {%
+      In calculating the total area, I have approximated each \cs{textbullet}
+      as a perfect circle, but, of course, the actual shape depends on the font
+      used.%
+    }
   Adding the optional argument instead scales the size of each \cs{textbullet}
   by a factor equal to the result of evaluating the \meta{fp expr}.
   The new \cs{textbullet} will be printed with the same vertical center only
@@ -120,12 +126,6 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
     Cannot be used in math mode.
   \end{itemize}
 \end{function}
-\footnotetext
-  {%
-    In calculating the total area, I have approximated each \cs{textbullet} as
-    a perfect circle, but, of course, the actual shape depends on the font
-    used.%
-  }
 
 \begin{function}{\scaletextbulletdebug}
   \begin{syntax}
