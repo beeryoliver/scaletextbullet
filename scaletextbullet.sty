@@ -1,14 +1,14 @@
-%%% Package   : scaletextbullet -- Resize the \textbullet without changing its
-%%% vertical center
-%%% Copyright : 2024-2025 (c) Oliver Beery <beeryoliver@gmail.com>
-%%% CTAN      : https://ctan.org/pkg/scaletextbullet
-%%% Repository: https://github.com/beeryoliver/scaletextbullet
-%%% License   : The LaTeX Project Public License 1.3c
+% Package   : scaletextbullet -- Resize the \textbullet without changing its
+% vertical center
+% Copyright : 2024-2025 (c) Oliver Beery <beeryoliver@gmail.com>
+% CTAN      : https://ctan.org/pkg/scaletextbullet
+% Repository: https://github.com/beeryoliver/scaletextbullet
+% License   : The LaTeX Project Public License 1.3c
 
-%%> \section{Loading the package}
+% Loading the package
 
 \NeedsTeXFormat{LaTeX2e}[2023-11-01]
-\ProvidesExplPackage{scaletextbullet}{2025-12-09}{2.0.5}
+\ProvidesExplPackage{scaletextbullet}{2025-12-27}{2.0.5}
   {Resize the \noexpand\textbullet without changing its vertical center.}
 
 \msg_new:nnn { scaletextbullet } { l3kernel }
@@ -20,7 +20,7 @@
 \IfExplAtLeastTF { 2023-11-01 } { }
   { \msg_critical:nn { scaletextbullet } { l3kernel } }
 
-%%> \section{Some variables}
+% Some variables
 
 \fp_new:N \l__scaletextbullet_factor_fp
 \fp_set:Nn \l__scaletextbullet_factor_fp { 0.4 }
@@ -33,7 +33,7 @@
 \fp_const:Nn \c__scaletextbullet_count_three_fp { 0.5773 5026 9189 6258 }
 \fp_const:Nn \c__scaletextbullet_count_four_fp  { 0.5 }
 
-%%> \section{Some functions}
+% Some functions
 
 % Lowers the \textbullet to the baseline, scales it by a factor of #2, and
 % then raises it back to the vertical center.
@@ -73,7 +73,7 @@
       { \dim_compare_p:nNn { \box_ht_plus_dp:N #1 } = \c_zero_dim }
   }
 
-%%> \section{Document commands}
+% Document commands
 
 \NewDocumentCommand \settextbulletfactor { m }
   {
@@ -226,7 +226,7 @@
     \group_end:
   }
 
-%%> \section{Messages}
+% Messages
 
 \msg_new:nnn { scaletextbullet } { math-mode-invalid }
   { '\iow_char:N \\ #1'~ invalid~ in~ math~ mode~ \msg_line_context:. }
