@@ -15,7 +15,7 @@ Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.5\quad 27 December 2025
+Version 2.0.5\quad 28 December 2025
 
 
 \section{Introduction}
@@ -60,7 +60,7 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
 \section{Commands}
 \label{sec:commands}
 
-\begin{function}{\settextbulletfactor}
+\begin{code}{\settextbulletfactor}
   \begin{syntax}
     \cs{settextbulletfactor} \marg{fp expr}
   \end{syntax}
@@ -72,9 +72,9 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
   The initial \cs{textbullet} factor is \num{0.4}---this matches the
   dimensions of the \cs{textbullet} of the Latin Modern font at size
   \qty{10}{pt}.
-\end{function}
+\end{code}
 
-\begin{function}{\scaletextbullet}
+\begin{code}{\scaletextbullet}
   \begin{syntax}
     \cs{scaletextbullet} \marg{fp expr}
   \end{syntax}
@@ -93,9 +93,9 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
     \item
     Cannot be used in math mode.
   \end{itemize}
-\end{function}
+\end{code}
 
-\begin{function}{\scaletextbullets}
+\begin{code}{\scaletextbullets}
   \begin{syntax}
     \cs{scaletextbullets} \oarg{fp expr} \marg{int expr}
   \end{syntax}
@@ -125,9 +125,9 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
     \item
     Cannot be used in math mode.
   \end{itemize}
-\end{function}
+\end{code}
 
-\begin{function}{\scaletextbulletdebug}
+\begin{code}{\scaletextbulletdebug}
   \begin{syntax}
     \cs{scaletextbulletdebug}
   \end{syntax}
@@ -142,7 +142,7 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
   consecutive \cs{textbullet}s have the same vertical center and the
   \cs{textbullet} fits nicely inside the framed box.
   Cannot be used in math mode.
-\end{function}
+\end{code}
 
 
 \section{Application}
