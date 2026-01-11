@@ -1,7 +1,7 @@
 % Loading the class
 
 \NeedsTeXFormat{LaTeX2e}[2025-11-01]
-\ProvidesExplClass{beerydoc}{2026-01-03}{0.0.0}{}
+\ProvidesExplClass{beerydoc}{2026-01-10}{0.0.0}{}
 \prop_gput:Nnn \g_msg_module_type_prop { beerydoc } { Class }
 
 \msg_new:nnn { beerydoc } { l3kernel }
@@ -91,6 +91,7 @@
 \tl_new:N \l__beerydoc_cs_tl
 \tl_new:N \l__beerydoc_meta_tl
 \tl_new:N \l__beerydoc_hook_tl
+\tl_new:N \l__beerydoc_socket_tl
 
 \bool_new:N \l__beerydoc_syntax_bool
 
@@ -132,12 +133,11 @@
   {
     \group_begin:
       \tl_set:Nn \l__beerydoc_key_tl {#1}
-      \tl_replace_all:Nnn \l__beerydoc_key_tl { / } { \__beerydoc_key_slash: }
+      \tl_replace_all:Nnn \l__beerydoc_key_tl { / } { \slash }
       \ttfamily
       \l__beerydoc_key_tl \@
     \group_end:
   }
-\cs_new_protected:Npn \__beerydoc_key_slash: { / \allowbreak }
 \cs_new_protected:Npn \__beerydoc_key_value_equal:
   {
     \bool_if:NTF \l__beerydoc_syntax_bool
@@ -175,18 +175,12 @@
     \group_begin:
       \tl_set:Nn \l__beerydoc_cs_tl {#1}
       \tl_replace_all:NVn \l__beerydoc_cs_tl \c__beerydoc_active_vert_tl { | }
-      \__beerydoc_cs_replace_spaces:
       \__beerydoc_cs_replace_underscore:
+      \__beerydoc_cs_replace_spaces:
       \__beerydoc_cs_hyphenation:
       \ttfamily
       \c_backslash_str \l__beerydoc_cs_tl \@
     \group_end:
-  }
-\cs_new_protected:Npn \__beerydoc_cs_replace_spaces:
-  {
-    \tl_replace_all:NVn \l__beerydoc_cs_tl \c_catcode_active_space_tl
-      { \textvisiblespace }
-    \tl_replace_all:Nnn \l__beerydoc_cs_tl { ~ } { \textvisiblespace }
   }
 \cs_new_protected:Npn \__beerydoc_cs_replace_underscore:
   {
@@ -198,6 +192,12 @@
       }
       { \tl_replace_all:NVn \l__beerydoc_cs_tl ##1 { _ } }
     \tl_replace_all:Nnn \l__beerydoc_cs_tl { \_ } { _ }
+  }
+\cs_new_protected:Npn \__beerydoc_cs_replace_spaces:
+  {
+    \tl_replace_all:NVn \l__beerydoc_cs_tl \c_catcode_active_space_tl
+      { \textvisiblespace }
+    \tl_replace_all:Nnn \l__beerydoc_cs_tl { ~ } { \textvisiblespace }
   }
 \cs_new_protected:Npn \__beerydoc_cs_hyphenation:
   {
@@ -350,11 +350,10 @@
     \__beerydoc_tmp:nN
   }
 \__beerydoc_tmp:nN
-  {cls}    \sffamily
-  {pkg}    \sffamily
-  {env}    \ttfamily
-  {socket} \ttfamily
-  {plug}   \ttfamily
+  {cls}  \sffamily
+  {pkg}  \sffamily
+  {env}  \ttfamily
+  {plug} \ttfamily
   { \q_recursion_tail } \scan_stop:
 \q_recursion_stop
 
@@ -368,13 +367,27 @@
   {
     \group_begin:
       \tl_set:Nn \l__beerydoc_hook_tl {#1}
-      \tl_replace_all:Nnn \l__beerydoc_hook_tl { / }
-        { \__beerydoc_hook_slash: }
+      \tl_replace_all:Nnn \l__beerydoc_hook_tl { / } { \slash }
       \ttfamily
       \l__beerydoc_hook_tl \@
     \group_end:
   }
-\cs_new_protected:Npn \__beerydoc_hook_slash: { / \allowbreak }
+
+\NewDocumentCommand \socket { m }
+  {
+    \mode_if_math:TF
+      { \msg_error:nnn { beerydoc } { math-mode-invalid } { socket } }
+      { \__beerydoc_socket:n {#1} }
+  }
+\cs_new_protected:Npn \__beerydoc_socket:n #1
+  {
+    \group_begin:
+      \tl_set:Nn \l__beerydoc_socket_tl {#1}
+      \tl_replace_all:Nnn \l__beerydoc_socket_tl { / } { \slash }
+      \ttfamily
+      \l__beerydoc_socket_tl \@
+    \group_end:
+  }
 
 \NewDocumentCommand \latin { m }
   {
@@ -418,10 +431,23 @@
 \cs_new_protected:Npn \__beerydoc_text_lowercase_small_caps:nn #1#2
   { \textls [ \int_eval:n {#1} ] { \scshape \text_lowercase:n {#2} } }
 
-\RenewDocumentCommand \slash { } { / \allowbreak }
+\RenewDocumentCommand \slash { } { / \penalty \exhyphenpenalty }
 
-% Custom environments
+% Code and syntax environments
 
+\NewDocumentEnvironment { code } { m }
+  {
+    \cs_set_eq:NN \footnote \__beerydoc_code_footnote:n
+    \noindent
+    \begin { minipage } [ b ] { \textwidth }
+      \setlength \parskip { \medskipamount }
+  }
+  { \end { minipage } }
+\cs_new_protected:Npn \__beerydoc_code_footnote:n #1
+  {
+    \footnotemark
+    \hook_gput_next_code:nn { env/code/after } { \footnotetext {#1} }
+  }
 \RequirePackage { tcolorbox }
 \NewTColorBox { syntax } { }
   {
@@ -443,19 +469,6 @@
   }
 \hook_gput_code:nnn { env/syntax/after } { beerydoc }
   { \noindent \ignorespaces }
-\NewDocumentEnvironment { code } { m }
-  {
-    \cs_set_eq:NN \footnote \__beerydoc_code_footnote:n
-    \noindent
-    \begin { minipage } [ b ] { \textwidth }
-      \setlength \parskip { \medskipamount }
-  }
-  { \end { minipage } }
-\cs_new_protected:Npn \__beerydoc_code_footnote:n #1
-  {
-    \footnotemark
-    \hook_gput_next_code:nn { env/code/after } { \footnotetext {#1} }
-  }
 
 % Floats
 
@@ -693,6 +706,7 @@
 \cs_new:Npn \__beerydoc_pdfstring_meta:n #1 { < \tl_to_str:n {#1} > }
 \cs_new:Npn \__beerydoc_pdfstring_cs:n
   { \textbackslash \__beerydoc_pdfstring_cs_aux:n }
+% Replaces \meta with \__beerydoc_pdfstring_meta:n.
 \cs_new:Npn \__beerydoc_pdfstring_cs_aux:n #1
   { \__beerydoc_pdfstring_cs:wn #1 \meta \q_recursion_tail \q_recursion_stop }
 \cs_new:Npn \__beerydoc_pdfstring_cs:wn #1 \meta #2
