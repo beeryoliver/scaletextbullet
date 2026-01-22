@@ -7,10 +7,11 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
-## [v2.0.5] - 2026-01-10
+## [v2.0.5] - 2026-01-21
 
 ### Changed
 - Maintenance update.
+- Improved documentation.
 
 ### Removed
 - `scaletextbullet-code.pdf`

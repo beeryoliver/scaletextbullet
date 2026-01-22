@@ -1,7 +1,7 @@
 % Loading the class
 
 \NeedsTeXFormat{LaTeX2e}[2025-11-01]
-\ProvidesExplClass{beerydoc}{2026-01-10}{0.0.0}{}
+\ProvidesExplClass{beerydoc}{2026-01-21}{0.0.0}{}
 \prop_gput:Nnn \g_msg_module_type_prop { beerydoc } { Class }
 
 \msg_new:nnn { beerydoc } { l3kernel }
@@ -44,12 +44,13 @@
 % Some variables
 
 \fp_const:Nn \c_beerydoc_golden_ratio_fp { 1.6180 3398 8749 8948 }
-\tl_const:Nn \c_beerydoc_alphabet_tl { abcdefghijklmnopqrstuvwxyz }
+\tl_const:Nn \c_beerydoc_alphabet_lowercase_tl { abcdefghijklmnopqrstuvwxyz }
+\tl_const:Nn \c_beerydoc_alphabet_uppercase_tl { ABCDEFGHIJKLMNOPQRSTUVWXYZ }
 \str_const:Nn \c_beerydoc_digits_str { 0123456789 }
 \tl_const:Nn \c_beerydoc_pangram_tl
   { The~ quick~ brown~ fox~ jumps~ over~ the~ lazy~ dog. }
 
-\hbox_set:Nn \l_tmpa_box { \c_beerydoc_alphabet_tl }
+\hbox_set:Nn \l_tmpa_box { \c_beerydoc_alphabet_lowercase_tl }
 \dim_const:Nn \c_beerydoc_alphabet_dim { \box_wd:N \l_tmpa_box }
 
 \dim_const:Nn \c_beerydoc_big_dim { \l_fontscale_normalsize_baselineskip_skip }
@@ -74,7 +75,8 @@
 \skip_log:N \c_beerydoc_med_skip
 \skip_log:N \c_beerydoc_small_skip
 
-\tl_const:Ne \c__beerydoc_math_subscript_tl { \char_generate:nn { `_ } { 8 } }
+\tl_const:Ne \c__beerydoc_math_subscript_underscore_tl
+  { \char_generate:nn { `_ } { 8 } }
 \group_begin:
   \char_set_catcode_active:N |
   \tl_const:Nn \c__beerydoc_active_vert_tl { | }
@@ -93,7 +95,10 @@
 \tl_new:N \l__beerydoc_hook_tl
 \tl_new:N \l__beerydoc_socket_tl
 
+\coffin_new:N \l__beerydoc_code_coffin
 \bool_new:N \l__beerydoc_syntax_bool
+\box_new:N \l__beerydoc_footnote_box
+\coffin_new:N \l__beerydoc_footnote_coffin
 
 % Custom macros
 
@@ -103,7 +108,7 @@
 \cs_new_protected:Npn \__beerydoc_langle: { \ensuremath { \langle } }
 \cs_new_protected:Npn \__beerydoc_rangle: { \ensuremath { \rangle } }
 
-\cs_new:Npe \alphabet { \c_beerydoc_alphabet_tl }
+\cs_new:Npe \alphabet { \c_beerydoc_alphabet_lowercase_tl }
 \cs_new:Npe \digits { \c_beerydoc_digits_str }
 \cs_new:Npe \pangram { \c_beerydoc_pangram_tl }
 
@@ -186,7 +191,7 @@
   {
     \tl_map_inline:nn
       {
-        \c__beerydoc_math_subscript_tl
+        \c__beerydoc_math_subscript_underscore_tl
         \c_underscore_str
         \c__beerydoc_active_underscore_tl
       }
@@ -201,13 +206,16 @@
   }
 \cs_new_protected:Npn \__beerydoc_cs_hyphenation:
   {
-    \tl_if_in:NnT \l__beerydoc_cs_tl { _ }
+    \bool_if:NF \l__beerydoc_syntax_bool
       {
-        \tl_regex_replace_all:NNn \l__beerydoc_cs_tl
-          \c__beerydoc_cs_hyphenation_regex { \1 \c{-} \2 }
+        \tl_if_in:NnT \l__beerydoc_cs_tl { _ }
+          {
+            \tl_regex_replace_all:NNn \l__beerydoc_cs_tl
+              \c__beerydoc_cs_hyphenation_regex { \1 \c{-} \2 }
+          }
       }
   }
-\regex_const:Nn \c__beerydoc_cs_hyphenation_regex { ([^\\\_]\_+) ([^\_]) }
+\regex_const:Nn \c__beerydoc_cs_hyphenation_regex { ([^\_]\_+)([^\_]) }
 \cs_new_protected:Npn \__beerydoc_cs:N #1
   { \exp_args:Ne \__beerydoc_cs:n { \cs_to_str:N #1 } }
 
@@ -230,7 +238,7 @@
   {
     \tl_map_inline:nn
       {
-        \c__beerydoc_math_subscript_tl
+        \c__beerydoc_math_subscript_underscore_tl
         _
         \c_underscore_str
         \c__beerydoc_active_underscore_tl
@@ -435,14 +443,24 @@
 
 % Code and syntax environments
 
-\NewDocumentEnvironment { code } { m }
+\NewDocumentEnvironment { code } { m } { \__beerydoc_code_start:nw {#1} }
+  { \__beerydoc_code_end: }
+\cs_new_protected:Npn \__beerydoc_code_start:nw #1
   {
-    \cs_set_eq:NN \footnote \__beerydoc_code_footnote:n
+    \par
+    \vspace { \skip_eval:n { \medskipamount - \parskip } }
     \noindent
-    \begin { minipage } [ b ] { \textwidth }
-      \setlength \parskip { \medskipamount }
+    \cs_set_eq:NN \footnote \__beerydoc_code_footnote:n
+    \vcoffin_set:Nnw \l__beerydoc_code_coffin { \textwidth }
+      \noindent \ignorespaces
   }
-  { \end { minipage } }
+\cs_new_protected:Npn \__beerydoc_code_end:
+  {
+    \vcoffin_set_end:
+    \coffin_typeset:Nnnnn \l__beerydoc_code_coffin { l } { T } { 0pt } { 0pt }
+    \par
+    \vspace { \skip_eval:n { \medskipamount - \parskip } }
+  }
 \cs_new_protected:Npn \__beerydoc_code_footnote:n #1
   {
     \footnotemark
@@ -663,7 +681,7 @@
         \setlength \leftmargin { 1.5em }
         \setlength \rightmargin { \leftmargin }
       }
-    \item \relax
+    \item \scan_stop:
   }
   { \endlist }
 
@@ -672,8 +690,6 @@
 \RequirePackage [ bottomfloats , ragged ] { footmisc }
 % \setlength { \skip \footins } { \c_beerydoc_big_skip }
 \setlength \footnotesep { \f@linespread \footnotesep }
-\box_new:N \l__beerydoc_footnote_box
-\coffin_new:N \l__beerydoc_footnote_coffin
 \cs_set_protected:Npn \@makefntext #1
   {
     \hbox_set:Nn \l__beerydoc_footnote_box { \@thefnmark . }
@@ -688,10 +704,10 @@
             \setlength \topsep { 0pt }
             \setlength \partopsep { 0pt }
           }
-        \item \relax #1 \endlist
+        \item \scan_stop: #1 \endlist
       }
     \coffin_typeset:Nnnnn \l__beerydoc_footnote_coffin { l } { b }
-      { \c_zero_dim } { \c_zero_dim }
+      { 0pt } { 0pt }
   }
 
 % References
