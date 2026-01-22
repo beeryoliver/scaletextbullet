@@ -15,7 +15,7 @@ Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.5\quad 10 January 2026
+Version 2.0.5\quad 21 January 2026
 
 
 \section{Introduction}
@@ -86,8 +86,8 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
   \listheading{Some exceptions:}
   \begin{itemize}
     \item
-    Issues an error if the result of evaluating the \meta{fp expr} is a
-    negative number.
+    Issues an error if the size of the \cs{textbullet} would be scaled by a
+    negative factor.
     \item
     Issues a warning if the new \cs{textbullet} would have zero dimensions.
     \item
@@ -100,24 +100,25 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
     \cs{scaletextbullets} \oarg{fp expr} \marg{int expr}
   \end{syntax}
   Prints a number of \cs{textbullet}s equal to the result of evaluating the
-  \meta{int expr} with about the same total area as the original
-  \cs{textbullet}.%
+  \meta{int expr}.
+  The size of each \cs{textbullet} is scaled by a factor equal to the result of
+  evaluating the \meta{fp expr} or, if the optional argument is omitted, by a
+  factor selected such that the new \cs{textbullet}(s) have the same total area
+  as the original \cs{textbullet}.%
   \footnote
     {%
       In calculating the total area, I have approximated each \cs{textbullet}
       as a perfect circle, but, of course, the actual shape depends on the font
       used.%
     }
-  Adding the optional argument instead scales the size of each \cs{textbullet}
-  by a factor equal to the result of evaluating the \meta{fp expr}.
   The new \cs{textbullet} will be printed with the same vertical center only if
   the \cs{textbullet} factor is set to the correct value.
 
   \listheading{Some exceptions:}
   \begin{itemize}
     \item
-    Issues an error if the result of evaluating the \meta{int expr} or
-    \meta{fp expr} is a negative number.
+    Issues an error if a negative number of \cs{textbullet}s would be printed
+    or if the size of the \cs{textbullet} would be scaled by negative factor.
     \item
     Issues a warning if no \cs{textbullet}s would be printed.
     \item
@@ -223,7 +224,7 @@ label indicates the list level:
 \end{multicols}
 
 The visual effect may be more clear with different fonts.
-This example uses STIX Two Text and Source Serif 4, respectively.
+This example uses STIX Two Text (top) and Source Serif 4 (bottom).
 
 \begingroup
   \settextbulletfactor{0.54}
