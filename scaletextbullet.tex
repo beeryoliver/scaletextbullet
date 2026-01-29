@@ -15,7 +15,7 @@ Resize the \cs{textbullet} without changing its vertical center
 
 Oliver Beery
 
-Version 2.0.5\quad 21 January 2026
+Version 2.0.5\quad 29 January 2026
 
 
 \section{Introduction}
@@ -52,7 +52,7 @@ Exchange thread.%
 \subsection{Syntax}
 \label{subsec:syntax}
 
-This documentation uses the syntaxes \meta{fp expr} and \meta{int expr}.
+This documentation uses the syntaxes \meta{number} and \meta{integer}.
 These syntaxes have the same meaning as the arguments to \cs{fpeval} and
 \cs{inteval}, respectively, which are documented in \pkg{usrguide}.
 
@@ -62,10 +62,9 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
 
 \begin{code}{\settextbulletfactor}
   \begin{syntax}
-    \cs{settextbulletfactor} \marg{fp expr}
+    \cs{settextbulletfactor} \marg{number}
   \end{syntax}
-  Sets the \cs{textbullet} factor to the result of evaluating the
-  \meta{fp expr}.
+  Sets the \cs{textbullet} factor to \meta{number}.
   This assignment is local to the current group.
   The \cs{textbullet} factor is the ratio of the width of the \cs{textbullet},
   excluding its empty space, to its width, including its empty space.
@@ -76,18 +75,16 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
 
 \begin{code}{\scaletextbullet}
   \begin{syntax}
-    \cs{scaletextbullet} \marg{fp expr}
+    \cs{scaletextbullet} \marg{number}
   \end{syntax}
-  Prints a \cs{textbullet} with its size scaled by a factor equal to the result
-  of evaluating the \meta{fp expr}.
+  Prints a \cs{textbullet} with its size scaled by factor \meta{number}.
   The new \cs{textbullet} will be printed with the same vertical center only if
   the \cs{textbullet} factor is set to the correct value.
 
   \listheading{Some exceptions:}
   \begin{itemize}
     \item
-    Issues an error if the size of the \cs{textbullet} would be scaled by a
-    negative factor.
+    Issues an error if $\meta{number}<\num{0}$.
     \item
     Issues a warning if the new \cs{textbullet} would have zero dimensions.
     \item
@@ -97,14 +94,12 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
 
 \begin{code}{\scaletextbullets}
   \begin{syntax}
-    \cs{scaletextbullets} \oarg{fp expr} \marg{int expr}
+    \cs{scaletextbullets} \oarg{number} \marg{integer}
   \end{syntax}
-  Prints a number of \cs{textbullet}s equal to the result of evaluating the
-  \meta{int expr}.
-  The size of each \cs{textbullet} is scaled by a factor equal to the result of
-  evaluating the \meta{fp expr} or, if the optional argument is omitted, by a
-  factor selected such that the new \cs{textbullet}(s) have the same total area
-  as the original \cs{textbullet}.%
+  Prints an \meta{integer} number of \cs{textbullet}s.
+  The size of each \cs{textbullet} is scaled by factor \meta{number} or, if the
+  optional argument is omitted, by a factor set such that the new
+  \cs{textbullet}s have the same total area as the original \cs{textbullet}.%
   \footnote
     {%
       In calculating the total area, I have approximated each \cs{textbullet}
@@ -117,10 +112,9 @@ These syntaxes have the same meaning as the arguments to \cs{fpeval} and
   \listheading{Some exceptions:}
   \begin{itemize}
     \item
-    Issues an error if a negative number of \cs{textbullet}s would be printed
-    or if the size of the \cs{textbullet} would be scaled by negative factor.
+    Issues an error if $\meta{integer}<\num{0}$ or $\meta{number}<\num{0}$.
     \item
-    Issues a warning if no \cs{textbullet}s would be printed.
+    Issues a warning if $\meta{integer}=\num{0}$.
     \item
     Issues a warning if the new \cs{textbullet} would have zero dimensions.
     \item

@@ -1,7 +1,7 @@
 % Loading the class
 
 \NeedsTeXFormat{LaTeX2e}[2025-11-01]
-\ProvidesExplClass{beerydoc}{2026-01-21}{0.0.0}{}
+\ProvidesExplClass{beerydoc}{2026-01-28}{0.0.0}{}
 \prop_gput:Nnn \g_msg_module_type_prop { beerydoc } { Class }
 
 \msg_new:nnn { beerydoc } { l3kernel }
@@ -96,9 +96,42 @@
 \tl_new:N \l__beerydoc_socket_tl
 
 \coffin_new:N \l__beerydoc_code_coffin
+\bool_new:N \l__beerydoc_code_bool
 \bool_new:N \l__beerydoc_syntax_bool
 \box_new:N \l__beerydoc_footnote_box
 \coffin_new:N \l__beerydoc_footnote_coffin
+
+% Define keys
+
+\keys_define:nn { beerydoc }
+  {
+      frenchspacing .bool_set:N = \l__beerydoc_frenchspacing_bool
+    , frenchspacing .value_required:n = true
+
+    , meta / replace-expr .bool_set:N = \l__beerydoc_meta_replace_expr_bool
+    , meta / replace-expr .value_required:n = true
+  }
+\cs_new_protected:Npn \__beerydoc_keys_set_initial:
+  {
+    \bool_set_true:N \l__beerydoc_frenchspacing_bool
+    \bool_set_true:N \l__beerydoc_meta_replace_expr_bool
+  }
+\__beerydoc_keys_set_initial:
+\NewDocumentCommand \beerydocsetup { s m }
+  {
+    \mode_if_math:TF
+      { \msg_error:nnn { beerydoc } { math-mode-invalid } { beerydocsetup } }
+      {
+        \IfBooleanTF #1 { \__beerydoc_keys_set_initial: }
+        \keys_set:nn { beerydoc } {#2}
+        \__beerydoc_keys_process:
+      }
+  }
+\cs_new_protected:Npn \__beerydoc_keys_process:
+  {
+    \bool_if:NTF \l__beerydoc_frenchspacing_bool
+      { \frenchspacing } { \nonfrenchspacing }
+  }
 
 % Custom macros
 
@@ -252,18 +285,21 @@
   { \ensuremath { \sb {#1} } }
 \cs_new_protected:Npn \__beerydoc_meta_replace_expr:
   {
-    \tl_if_in:NnT \l__beerydoc_meta_tl { expr }
+    \bool_if:NT \l__beerydoc_meta_replace_expr_bool
       {
-        \tl_replace_once:Non \l__beerydoc_meta_tl
-          { \c_catcode_active_space_tl expr } { ~expr }
-        \__beerydoc_meta_replace_expr:nn
-          { fp~ expr } { floating~ point~ expression }
-          { int~ expr } { integer~ expression }
-          { dim~ expr } { dimen~ expression }
-          { skip~ expr } { skip~ expression }
-          { muskip~ expr } { muskip~ expression }
-          { \q_recursion_tail } { }
-        \q_recursion_stop
+        \tl_if_in:NnT \l__beerydoc_meta_tl { expr }
+          {
+            \tl_replace_once:Non \l__beerydoc_meta_tl
+              { \c_catcode_active_space_tl expr } { ~expr }
+            \__beerydoc_meta_replace_expr:nn
+              { fp~ expr } { floating~ point~ expression }
+              { int~ expr } { integer~ expression }
+              { dim~ expr } { dimen~ expression }
+              { skip~ expr } { skip~ expression }
+              { muskip~ expr } { muskip~ expression }
+              { \q_recursion_tail } { }
+            \q_recursion_stop
+          }
       }
   }
 \cs_new_protected:Npn \__beerydoc_meta_replace_expr:nn #1#2
@@ -447,10 +483,8 @@
   { \__beerydoc_code_end: }
 \cs_new_protected:Npn \__beerydoc_code_start:nw #1
   {
-    \par
-    \vspace { \skip_eval:n { \medskipamount - \parskip } }
-    \noindent
-    \cs_set_eq:NN \footnote \__beerydoc_code_footnote:n
+    \__beerydoc_code_typeset_start:
+    \__beerydoc_code_init:
     \vcoffin_set:Nnw \l__beerydoc_code_coffin { \textwidth }
       \noindent \ignorespaces
   }
@@ -458,8 +492,25 @@
   {
     \vcoffin_set_end:
     \coffin_typeset:Nnnnn \l__beerydoc_code_coffin { l } { T } { 0pt } { 0pt }
+    \__beerydoc_code_typeset_stop:
+  }
+\cs_new_protected:Npn \__beerydoc_code_typeset_start:
+  {
     \par
-    \vspace { \skip_eval:n { \medskipamount - \parskip } }
+    \vspace { \skip_eval:n { \c_beerydoc_med_skip - \parskip } }
+    \noindent
+  }
+\cs_new_protected:Npn \__beerydoc_code_typeset_stop:
+  {
+    \par
+    \vspace { \skip_eval:n { \c_beerydoc_med_skip - \parskip } }
+  }
+\cs_new_protected:Npn \__beerydoc_code_init:
+  {
+    \bool_if:NT \l__beerydoc_code_bool
+      { \msg_error:nn { beerydoc } { code-env-not-nestable } }
+    \bool_set_true:N \l__beerydoc_code_bool
+    \cs_set_eq:NN \footnote \__beerydoc_code_footnote:n
   }
 \cs_new_protected:Npn \__beerydoc_code_footnote:n #1
   {
@@ -479,6 +530,10 @@
   }
 \cs_new_protected:Npn \__beerydoc_syntax_code:
   {
+    \bool_if:NF \l__beerydoc_code_bool
+      { \msg_error:nn { beerydoc } { syntax-env-misused } }
+    \bool_if:NT \l__beerydoc_syntax_bool
+      { \msg_error:nn { beerydoc } { syntax-env-not-nestable } }
     \bool_set_true:N \l__beerydoc_syntax_bool
     \ttfamily
     \raggedright
@@ -534,8 +589,8 @@
 
 % Paragraph style
 
-% \frenchspacing
-\nonfrenchspacing
+\frenchspacing
+% \nonfrenchspacing
 % \linespread { 1 }
 \RequirePackage [ skip = \skip_use:N \c_beerydoc_med_skip ] { parskip }
 % default = 0.5 \baselineskip plus 2pt
@@ -755,3 +810,18 @@
 
 \msg_new:nnn { beerydoc } { math-mode-invalid }
   { '\iow_char:N \\ #1'~ invalid~ in~ math~ mode~ \msg_line_context:. }
+\msg_new:nnn { beerydoc } { code-env-not-nestable }
+  {
+    The~ 'code'~ environment~ cannot~ be~ used~ within~ another~
+    'code'~ environment~ \msg_line_context:.
+  }
+\msg_new:nnn { beerydoc } { syntax-env-misused }
+  {
+    The~ 'syntax' environment~ must~ be~ used~ within~ a~
+    'code'~ environment~ \msg_line_context:.
+  }
+\msg_new:nnn { beerydoc } { syntax-env-not-nestable }
+  {
+    The~ 'syntax' environment~ cannot~ be~ used~ within~ another~
+    'syntax'~ environment~ \msg_line_context:.
+  }
