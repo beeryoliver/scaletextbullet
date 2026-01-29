@@ -7,10 +7,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
-## [v2.0.5] - 2026-01-21
+## [v2.0.5] - 2026-01-29
 
 ### Changed
-- Maintenance update.
+- Maintenance update before TeX Live 2026.
 - Improved documentation.
 
 ### Removed
